@@ -2,7 +2,7 @@
   "name": "BMW Display",
   "short_name": "BMW Display",
   "description": "BMW Display Preset Studio",
-  "start_url": "./bmw-app.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#060608",
   "theme_color": "#060608",
