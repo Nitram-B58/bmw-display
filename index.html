@@ -188,9 +188,96 @@ body{background:#060608;color:#eee;font-family:'Rajdhani',sans-serif;min-height:
   <div class="tab" onclick="switchTab(3,this)">Icons</div>
   <div class="tab" onclick="switchTab(4,this)">Mine</div>
 </div>
+
 <div class="grid-wrap"><div class="grid" id="grid"></div></div>
 <input type="file" id="fileInput" accept="image/*,.gif" style="display:none" multiple>
-<div class="bottom-nav"><div style="display:flex;gap:10px;width:100%;"><button class="send-btn" id="applyBtn" onclick="applyPreset()" style="flex:1;">Apply Preset</button><button class="send-btn" onclick="document.getElementById('fileInput').click()" style="flex:0 0 auto;padding:13px 16px;letter-spacing:2px;">+ Upload</button></div></div>
+<div class="bottom-nav"><div style="display:flex;gap:10px;width:100%;align-items:center;"><button class="send-btn" id="applyBtn" onclick="applyPreset()" style="flex:1;">Apply Preset</button><button class="send-btn" onclick="document.getElementById('fileInput').click()" style="flex:0 0 auto;padding:13px 16px;letter-spacing:2px;">+ Upload</button></div></div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div id="deleteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:300;flex-direction:column;align-items:center;justify-content:center;">
+  <div style="background:#0d0d18;border:1px solid #1a1a2e;border-radius:16px;padding:28px 24px;width:88%;max-width:320px;text-align:center;">
+    <div style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:3px;color:#ff5555;margin-bottom:10px;text-transform:uppercase;">Delete Preset?</div>
+    <div style="font-size:13px;color:#555;letter-spacing:1px;margin-bottom:24px;">This cannot be undone.</div>
+    <div id="deleteTimer" style="font-family:Orbitron,monospace;font-size:28px;color:#ff5555;margin-bottom:20px;display:none;">3</div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="cancelDelete()" style="flex:1;padding:12px;border-radius:8px;background:transparent;border:1px solid #1a1a2e;color:#444;font-family:Orbitron,monospace;font-size:8px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;">No, Keep It</button>
+      <button id="deleteConfirmBtn" onclick="startDeleteTimer()" style="flex:1;padding:12px;border-radius:8px;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.35);color:#ff5555;font-family:Orbitron,monospace;font-size:8px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- COLOR CUSTOMIZER MODAL -->
+<div id="colorModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:300;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0d0d18;border:1px solid #1a1a2e;border-radius:16px;padding:22px 20px;width:92%;max-width:360px;">
+    <div style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:4px;color:#4fc3f7;margin-bottom:4px;text-transform:uppercase;">Color Editor</div>
+    <div style="font-size:11px;color:#333;letter-spacing:1px;margin-bottom:18px;">Customize BMW roundel colors</div>
+    
+    <!-- Preview circle -->
+    <canvas id="colorPreviewCanvas" width="120" height="120" style="border-radius:50%;display:block;margin:0 auto 18px;"></canvas>
+
+    <!-- Color inputs -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      <div>
+        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">BLUE (LIGHT)</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="color" id="cc_blue" value="#1a5fad" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
+          <input type="text" id="cc_blue_hex" value="#1a5fad" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_blue'))">
+        </div>
+      </div>
+      <div>
+        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">BLUE (DARK)</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="color" id="cc_blueDark" value="#0d3d7a" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
+          <input type="text" id="cc_blueDark_hex" value="#0d3d7a" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_blueDark'))">
+        </div>
+      </div>
+      <div>
+        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">WHITE (LIGHT)</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="color" id="cc_white" value="#f5f5f5" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
+          <input type="text" id="cc_white_hex" value="#f5f5f5" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_white'))">
+        </div>
+      </div>
+      <div>
+        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">WHITE (DARK)</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="color" id="cc_whiteDark" value="#d0d0d0" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
+          <input type="text" id="cc_whiteDark_hex" value="#d0d0d0" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_whiteDark'))">
+        </div>
+      </div>
+      <div>
+        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">RING</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="color" id="cc_ring" value="#0a0a0a" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
+          <input type="text" id="cc_ring_hex" value="#0a0a0a" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_ring'))">
+        </div>
+      </div>
+      <div>
+        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">CHROME</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="color" id="cc_chrome" value="#777777" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
+          <input type="text" id="cc_chrome_hex" value="#777777" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_chrome'))">
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick presets -->
+    <div style="font-family:Orbitron,monospace;font-size:7px;color:#333;letter-spacing:2px;margin-bottom:8px;">QUICK PRESETS</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button onclick="applyColorPreset('classic')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Classic</button>
+      <button onclick="applyColorPreset('chrome')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Chrome</button>
+      <button onclick="applyColorPreset('msport')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">M Sport</button>
+      <button onclick="applyColorPreset('gold')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Gold</button>
+      <button onclick="applyColorPreset('purple')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Purple</button>
+      <button onclick="applyColorPreset('stealth')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Stealth</button>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="saveColors()" style="flex:1;padding:12px;border-radius:8px;background:rgba(79,195,247,0.1);border:1px solid rgba(79,195,247,0.35);color:#4fc3f7;font-family:Orbitron,monospace;font-size:8px;letter-spacing:3px;cursor:pointer;text-transform:uppercase;">Save</button>
+      <button onclick="closeColorModal()" style="flex:0 0 auto;padding:12px 16px;border-radius:8px;background:transparent;border:1px solid #1a1a2e;color:#444;font-family:Orbitron,monospace;font-size:8px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- EDITOR MODAL -->
 <div class="editor-modal" id="editorModal">
@@ -413,93 +500,7 @@ function drawSnowflake(c,s,t){
 }
 
 // ── SKULL (side angle, gritty) ────────────────────────────
-function drawSkull(c,s){
-  const cx=s/2,cy=s/2;
-  c.clearRect(0,0,s,s);
-  c.fillStyle='#000';c.fillRect(0,0,s,s);
-  // add grain texture
-  function grain(){
-    for(let i=0;i<800;i++){
-      const gx=Math.random()*s,gy=Math.random()*s,ga=Math.random()*.04;
-      circle(c,gx,gy,.6);c.fillStyle=`rgba(180,170,140,${ga})`;c.fill();
-    }
-  }
-  c.save();circle(c,cx,cy,s*.44);c.clip();
-  // skull base color - weathered bone
-  const skullCol='#b8b090';
-  const shadowCol='#1a1810';
-  // main cranium - shifted slightly left for side view
-  const skCx=cx-s*.03,skCy=cy-s*.04;
-  // cranium dome
-  const cg=c.createRadialGradient(skCx-s*.08,skCy-s*.1,0,skCx,skCy,s*.32);
-  cg.addColorStop(0,'#ccc5a0');cg.addColorStop(.4,'#b0a880');cg.addColorStop(.75,'#8a8260');cg.addColorStop(1,'#3a3428');
-  c.beginPath();
-  c.ellipse(skCx,skCy-s*.04,s*.26,s*.27,0.12,0,Math.PI*2);
-  c.fillStyle=cg;c.fill();
-  // cheekbone / zygomatic arch
-  c.beginPath();
-  c.ellipse(skCx+s*.1,skCy+s*.08,s*.18,s*.1,-0.2,0,Math.PI*2);
-  c.fillStyle='#a09870';c.fill();
-  // jaw / mandible
-  c.beginPath();
-  c.moveTo(skCx-s*.18,skCy+s*.1);
-  c.bezierCurveTo(skCx-s*.2,skCy+s*.2,skCx-s*.05,skCy+s*.3,skCx+s*.12,skCy+s*.25);
-  c.bezierCurveTo(skCx+s*.22,skCy+s*.2,skCx+s*.24,skCy+s*.1,skCx+s*.18,skCy+s*.04);
-  c.bezierCurveTo(skCx+s*.2,skCy+s*.08,skCx+s*.14,skCy+s*.15,skCx+s*.06,skCy+s*.14);
-  c.bezierCurveTo(skCx-s*.04,skCy+s*.22,skCx-s*.1,skCy+s*.16,skCx-s*.14,skCy+s*.1);
-  c.closePath();
-  const jg=c.createLinearGradient(skCx,skCy+s*.1,skCx,skCy+s*.3);
-  jg.addColorStop(0,'#a09870');jg.addColorStop(1,'#6a6448');
-  c.fillStyle=jg;c.fill();
-  // large eye socket - deep hollow
-  c.beginPath();
-  c.ellipse(skCx+s*.04,skCy-s*.04,s*.1,s*.095,0.25,0,Math.PI*2);
-  c.fillStyle=shadowCol;c.fill();
-  // socket rim shadow
-  const eg=c.createRadialGradient(skCx+s*.04,skCy-s*.04,s*.02,skCx+s*.04,skCy-s*.04,s*.11);
-  eg.addColorStop(0,'rgba(0,0,0,0.95)');eg.addColorStop(.6,'rgba(0,0,0,0.6)');eg.addColorStop(1,'rgba(0,0,0,0)');
-  c.beginPath();c.ellipse(skCx+s*.04,skCy-s*.04,s*.115,s*.11,0.25,0,Math.PI*2);c.fillStyle=eg;c.fill();
-  // nasal cavity
-  c.beginPath();
-  c.moveTo(skCx+s*.14,skCy+s*.06);
-  c.lineTo(skCx+s*.1,skCy+s*.14);
-  c.lineTo(skCx+s*.19,skCy+s*.13);
-  c.closePath();c.fillStyle=shadowCol;c.fill();
-  // temporal line / brow ridge
-  c.strokeStyle='rgba(50,46,32,0.7)';c.lineWidth=s*.012;c.lineCap='round';
-  c.beginPath();c.moveTo(skCx-s*.18,skCy-s*.08);c.bezierCurveTo(skCx-s*.04,skCy-s*.16,skCx+s*.08,skCy-s*.15,skCx+s*.14,skCy-s*.08);c.stroke();
-  // cheekbone line
-  c.beginPath();c.moveTo(skCx+s*.14,skCy-s*.04);c.bezierCurveTo(skCx+s*.2,skCy+s*.04,skCx+s*.22,skCy+s*.1,skCx+s*.18,skCy+s*.14);c.stroke();
-  // jawline crease
-  c.strokeStyle='rgba(30,28,18,0.6)';c.lineWidth=s*.009;
-  c.beginPath();c.moveTo(skCx-s*.04,skCy+s*.14);c.bezierCurveTo(skCx+s*.02,skCy+s*.18,skCx+s*.1,skCy+s*.17,skCx+s*.14,skCy+s*.14);c.stroke();
-  // teeth - visible from side angle
-  const teethY=skCy+s*.19,teethX=skCx+s*.04;
-  for(let i=0;i<6;i++){
-    const tx=teethX+i*s*.035,tw=s*.028,th=s*.06*(1-i*.06);
-    const ttg=c.createLinearGradient(tx,teethY,tx,teethY+th);
-    ttg.addColorStop(0,'#ddd8c0');ttg.addColorStop(1,'#aaa488');
-    c.fillStyle=ttg;
-    c.beginPath();c.roundRect(tx,teethY,tw,th,s*.004);c.fill();
-    c.strokeStyle='rgba(40,38,25,0.5)';c.lineWidth=s*.004;c.stroke();
-  }
-  // tooth gap shadows
-  c.fillStyle='rgba(0,0,0,0.5)';
-  for(let i=0;i<5;i++){c.fillRect(teethX+(i+1)*s*.035-s*.005,teethY,s*.005,s*.04);}
-  // crack lines on skull
-  c.strokeStyle='rgba(30,28,18,0.55)';c.lineWidth=s*.006;c.lineCap='round';
-  c.beginPath();c.moveTo(skCx-s*.04,skCy-s*.24);c.lineTo(skCx-s*.01,skCy-s*.14);c.lineTo(skCx-s*.06,skCy-s*.08);c.stroke();
-  c.beginPath();c.moveTo(skCx+s*.1,skCy-s*.2);c.lineTo(skCx+s*.06,skCy-s*.12);c.stroke();
-  // grain texture overlay
-  grain();
-  // overall dark shadow bottom
-  const vg=c.createRadialGradient(cx,cy,s*.15,cx,cy,s*.45);
-  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.65)');
-  c.fillStyle=vg;c.fillRect(0,0,s,s);
-  c.restore();
-  // outer ring
-  circle(c,cx,cy,s*.44);c.strokeStyle='rgba(120,110,80,0.35)';c.lineWidth=s*.018;c.stroke();
-}
+
 
 // ── FLAMES ────────────────────────────────────────────────
 function drawFlames(c,s,t){
@@ -699,26 +700,7 @@ function drawSharingan(c,s,t){
 }
 
 // ── YIN YANG ──────────────────────────────────────────────
-function drawYinYang(c,s){
-  const cx=s/2,cy=s/2,r=s*.38;
-  c.clearRect(0,0,s,s);
-  const bg=c.createRadialGradient(cx,cy,0,cx,cy,s*.5);bg.addColorStop(0,'#111');bg.addColorStop(1,'#000');c.fillStyle=bg;c.fillRect(0,0,s,s);
-  circle(c,cx,cy,r*1.12);
-  const cg=c.createLinearGradient(cx-r,cy-r,cx+r,cy+r);
-  cg.addColorStop(0,'#555');cg.addColorStop(.5,'#888');cg.addColorStop(1,'#333');
-  c.fillStyle=cg;c.fill();circle(c,cx,cy,r*1.05);c.fillStyle='#090909';c.fill();
-  c.save();circle(c,cx,cy,r);c.clip();
-  c.fillStyle='#f0f0f0';c.fillRect(cx-r,cy-r,r*2,r*2);
-  c.beginPath();c.arc(cx,cy,r,Math.PI*.5,Math.PI*1.5);c.closePath();c.fillStyle='#0d0d0d';c.fill();
-  c.beginPath();c.arc(cx,cy-r/2,r/2,Math.PI*1.5,Math.PI*.5,true);c.closePath();c.fillStyle='#0d0d0d';c.fill();
-  c.beginPath();c.arc(cx,cy+r/2,r/2,Math.PI*1.5,Math.PI*.5,false);c.closePath();c.fillStyle='#f0f0f0';c.fill();
-  circle(c,cx,cy-r/2,r*.14);c.fillStyle='#f0f0f0';c.fill();
-  circle(c,cx,cy+r/2,r*.14);c.fillStyle='#0d0d0d';c.fill();
-  const sh=c.createRadialGradient(cx-r*.3,cy-r*.3,0,cx,cy,r);
-  sh.addColorStop(0,'rgba(255,255,255,0.07)');sh.addColorStop(1,'rgba(255,255,255,0)');
-  c.fillStyle=sh;c.fillRect(0,0,s,s);c.restore();
-  circle(c,cx,cy,r);c.strokeStyle='rgba(255,255,255,0.07)';c.lineWidth=s*.006;c.stroke();
-}
+
 
 // ── NIGHT SKY ─────────────────────────────────────────────
 function drawNightSky(c,s,t){
@@ -1387,6 +1369,861 @@ function drawTireBurnout(c,s,t){
   c.restore();
 }
 
+
+// ── BMW M LOGO (real design) ─────────────────────────────
+
+
+// ── RAIN DROPS ───────────────────────────────────────────
+function drawRain(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);
+  const bg=c.createRadialGradient(cx,cy,0,cx,cy,s/2);
+  bg.addColorStop(0,'#060c14');bg.addColorStop(1,'#000508');
+  c.fillStyle=bg;c.fillRect(0,0,s,s);
+  c.save();c.beginPath();c.arc(cx,cy,s*.46,0,Math.PI*2);c.clip();
+
+  // Rain drops sliding down
+  const drops=25;
+  for(let i=0;i<drops;i++){
+    const seed=i*137.5;
+    const x=(Math.sin(seed)*.5+.5)*s;
+    const speed=.8+Math.sin(seed*2.1)*.4;
+    const y=((t*speed*0.8+seed*7.3)%s);
+    const len=s*.04+Math.sin(seed*3.7)*s*.03;
+    const alpha=.3+Math.sin(seed*1.3)*.2;
+    const width=s*.004+Math.sin(seed*2.3)*s*.002;
+
+    const dg=c.createLinearGradient(x,y-len,x,y);
+    dg.addColorStop(0,'rgba(100,180,255,0)');
+    dg.addColorStop(0.5,`rgba(140,200,255,${alpha})`);
+    dg.addColorStop(1,`rgba(200,230,255,${alpha*1.3})`);
+    c.strokeStyle=dg;c.lineWidth=width;c.lineCap='round';
+    c.beginPath();c.moveTo(x,y-len);c.lineTo(x,y);c.stroke();
+
+    // Splash at bottom
+    if(y>s*.8){
+      const splashAlpha=(y-s*.8)/(s*.2)*alpha*.5;
+      c.strokeStyle=`rgba(150,210,255,${splashAlpha})`;
+      c.lineWidth=s*.003;
+      c.beginPath();c.arc(x,s*.92,s*.015*(y-s*.8)/(s*.2),Math.PI,Math.PI*2);c.stroke();
+    }
+  }
+
+  // Window reflection streak
+  const streak=c.createLinearGradient(cx-s*.3,cy-s*.1,cx+s*.3,cy+s*.1);
+  streak.addColorStop(0,'rgba(150,200,255,0)');
+  streak.addColorStop(.5,'rgba(150,200,255,0.04)');
+  streak.addColorStop(1,'rgba(150,200,255,0)');
+  c.fillStyle=streak;c.fillRect(0,0,s,s);
+  c.restore();
+
+  // outer ring
+  c.beginPath();c.arc(cx,cy,s*.46,0,Math.PI*2);
+  c.strokeStyle='rgba(100,180,255,0.2)';c.lineWidth=s*.016;c.stroke();
+}
+
+// ── TACHOMETER ───────────────────────────────────────────
+function drawTach(c,s,t){
+  const cx=s/2,cy=s/2+s*.05;
+  c.clearRect(0,0,s,s);
+  const bg=c.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+  bg.addColorStop(0,'#0a0a0a');bg.addColorStop(1,'#000');
+  c.fillStyle=bg;c.fillRect(0,0,s,s);
+
+  const r=s*.36,startA=Math.PI*.75,endA=Math.PI*2.25;
+  // RPM oscillates dramatically - like revving
+  const wave=Math.sin(t*.025)*Math.sin(t*.017)*Math.sin(t*.011);
+  const rpm=Math.max(0,Math.min(1,(wave+1)/2));
+  const needleA=startA+(endA-startA)*rpm;
+
+  // Track bg
+  c.beginPath();c.arc(cx,cy,r,startA,endA);
+  c.strokeStyle='#181818';c.lineWidth=s*.055;c.lineCap='round';c.stroke();
+
+  // Colored arc
+  const ag=c.createLinearGradient(cx-r,cy,cx+r,cy);
+  ag.addColorStop(0,'#00cc44');ag.addColorStop(.6,'#ffcc00');ag.addColorStop(.85,'#ff6600');ag.addColorStop(1,'#ff0000');
+  c.beginPath();c.arc(cx,cy,r,startA,needleA);
+  c.strokeStyle=ag;c.lineWidth=s*.04;c.shadowColor='rgba(255,150,0,0.3)';c.shadowBlur=8;c.stroke();c.shadowBlur=0;
+
+  // Redline zone
+  c.beginPath();c.arc(cx,cy,r,startA+(endA-startA)*.85,endA);
+  c.strokeStyle='rgba(255,0,0,0.3)';c.lineWidth=s*.055;c.stroke();
+
+  // Tick marks
+  for(let i=0;i<=8;i++){
+    const a=startA+(endA-startA)*i/8;
+    const isMaj=i%2===0;
+    c.strokeStyle=isMaj?'#888':'#333';c.lineWidth=isMaj?s*.01:s*.006;
+    c.beginPath();
+    c.moveTo(cx+Math.cos(a)*r*(isMaj?.80:.87),cy+Math.sin(a)*r*(isMaj?.80:.87));
+    c.lineTo(cx+Math.cos(a)*r*.96,cy+Math.sin(a)*r*.96);c.stroke();
+    // RPM numbers
+    if(isMaj){
+      c.font=`600 ${s*.055}px Orbitron,monospace`;
+      c.textAlign='center';c.textBaseline='middle';
+      c.fillStyle='rgba(255,255,255,0.6)';
+      const nr=r*.68;
+      c.fillText(i,cx+Math.cos(a)*nr,cy+Math.sin(a)*nr);
+    }
+  }
+
+  // RPM label
+  c.font=`400 ${s*.052}px Orbitron,monospace`;
+  c.textAlign='center';c.textBaseline='middle';
+  c.fillStyle='#333';c.fillText('x1000 RPM',s/2,s*.3);
+
+  // Needle
+  c.save();c.translate(cx,cy);c.rotate(needleA);
+  const ng=c.createLinearGradient(-s*.03,0,r*.78,0);
+  ng.addColorStop(0,'#ff3300');ng.addColorStop(.6,'#ff6600');ng.addColorStop(1,'rgba(255,100,0,0)');
+  c.shadowColor='#ff3300';c.shadowBlur=10;
+  c.fillStyle=ng;c.beginPath();c.moveTo(0,-s*.011);c.lineTo(r*.78,0);c.lineTo(0,s*.011);c.closePath();c.fill();
+  c.shadowBlur=0;c.restore();
+
+  // Center cap
+  const capg=c.createRadialGradient(cx-s*.012,cy-s*.012,0,cx,cy,s*.04);
+  capg.addColorStop(0,'#888');capg.addColorStop(1,'#222');
+  c.beginPath();c.arc(cx,cy,s*.04,0,Math.PI*2);c.fillStyle=capg;c.fill();
+}
+
+// ── MATRIX RAIN ──────────────────────────────────────────
+function drawMatrix(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);c.fillStyle='#000';c.fillRect(0,0,s,s);
+  c.save();c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);c.clip();
+
+  const cols=Math.floor(s/s*.065);
+  const charSize=s*.055;
+  const colW=charSize*1.1;
+  const numCols=Math.floor(s/colW);
+  const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEF';
+
+  for(let col=0;col<numCols;col++){
+    const speed=0.5+Math.sin(col*2.3)*.3;
+    const offset=col*37.7;
+    const rows=Math.floor(s/charSize)+5;
+    for(let row=0;row<rows;row++){
+      const y=((t*speed*0.4+offset+row*charSize)%( s*1.5))-charSize*2;
+      const x=col*colW;
+      const isHead=row===Math.floor(rows*.7);
+      const alpha=isHead?1:Math.max(0,(1-row/rows)*0.7);
+      const ch=chars[Math.floor((t*.05+col*7.3+row*3.7))%chars.length];
+      c.font=`${charSize}px monospace`;
+      c.fillStyle=isHead?`rgba(180,255,180,${alpha})`:`rgba(0,${Math.floor(180+row*3)},0,${alpha})`;
+      c.fillText(ch,x,y);
+    }
+  }
+  c.restore();
+  // vignette
+  const vg=c.createRadialGradient(cx,cy,s*.2,cx,cy,s*.46);
+  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.6)');
+  c.save();c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);c.clip();c.fillStyle=vg;c.fillRect(0,0,s,s);c.restore();
+  c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);c.strokeStyle='rgba(0,200,0,0.25)';c.lineWidth=s*.015;c.stroke();
+}
+
+// ── GLITCH BMW ───────────────────────────────────────────
+
+
+// ── GRADIENT WAVE ────────────────────────────────────────
+function drawGradientWave(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);
+  c.save();c.beginPath();c.arc(cx,cy,s*.46,0,Math.PI*2);c.clip();
+
+  // Flowing gradient wave
+  const hue1=(t*.3)%360;
+  const hue2=(t*.3+120)%360;
+  const hue3=(t*.3+240)%360;
+
+  for(let y=0;y<s;y+=2){
+    const wave=Math.sin(y*.04+t*.05)*30+Math.sin(y*.02+t*.03)*20;
+    const wg=c.createLinearGradient(0,y,s,y);
+    const pos=(wave+50)/100;
+    wg.addColorStop(0,`hsla(${hue1},80%,40%,0.8)`);
+    wg.addColorStop(Math.max(0,Math.min(1,pos)),`hsla(${hue2},80%,50%,0.9)`);
+    wg.addColorStop(1,`hsla(${hue3},80%,40%,0.8)`);
+    c.fillStyle=wg;
+    c.fillRect(0,y,s,2);
+  }
+
+  // Dark overlay for depth
+  const ov=c.createRadialGradient(cx,cy,0,cx,cy,s*.46);
+  ov.addColorStop(0,'rgba(0,0,0,0.2)');ov.addColorStop(1,'rgba(0,0,0,0.5)');
+  c.fillStyle=ov;c.fillRect(0,0,s,s);
+  c.restore();
+  c.beginPath();c.arc(cx,cy,s*.46,0,Math.PI*2);c.strokeStyle='rgba(255,255,255,0.15)';c.lineWidth=s*.018;c.stroke();
+}
+
+// ── POLICE LIGHTS ────────────────────────────────────────
+function drawPolice(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);c.fillStyle='#000';c.fillRect(0,0,s,s);
+  c.save();c.beginPath();c.arc(cx,cy,s*.46,0,Math.PI*2);c.clip();
+
+  const phase=Math.floor(t/8)%6;
+  const isRed=phase<3;
+  const col=isRed?'#ff1122':'#1144ff';
+  const flash=Math.sin(t*.4)>.0?1:0;
+
+  if(flash){
+    const bg=c.createRadialGradient(isRed?cx*0.5:cx*1.5,cy,0,cx,cy,s*.6);
+    bg.addColorStop(0,isRed?'rgba(255,0,0,0.9)':'rgba(0,80,255,0.9)');
+    bg.addColorStop(.4,isRed?'rgba(200,0,0,0.4)':'rgba(0,50,200,0.4)');
+    bg.addColorStop(1,'rgba(0,0,0,0.8)');
+    c.fillStyle=bg;c.fillRect(0,0,s,s);
+
+    // Rotating light beam
+    c.save();c.translate(cx,cy);c.rotate(t*.15*(isRed?1:-1));
+    const beam=c.createConicalGradient?c.createConicalGradient(0,0,0):null;
+    c.fillStyle=`${col}33`;
+    c.beginPath();
+    c.moveTo(0,0);
+    c.arc(0,0,s*.5,-0.4,0.4);
+    c.closePath();c.fill();
+    c.restore();
+  }
+
+  // Reflection strips
+  for(let i=0;i<3;i++){
+    c.strokeStyle=`rgba(255,255,255,${flash?0.3:0.05})`;
+    c.lineWidth=s*.008;
+    c.beginPath();c.moveTo(0,cy-s*.05+i*s*.05);c.lineTo(s,cy-s*.05+i*s*.05);c.stroke();
+  }
+  c.restore();
+  c.beginPath();c.arc(cx,cy,s*.46,0,Math.PI*2);c.strokeStyle=col;c.lineWidth=s*.016;
+  c.globalAlpha=flash?.6:.1;c.stroke();c.globalAlpha=1;
+}
+
+// ── B58 HEART ────────────────────────────────────────────
+function drawB58Heart(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);
+  c.fillStyle='#000';c.fillRect(0,0,s,s);
+
+  // Heartbeat timing - lub-dub pattern
+  const bpm=72;
+  const beatPeriod=60/bpm*60; // frames
+  const phase=(t%beatPeriod)/beatPeriod;
+  let scale=1;
+  if(phase<0.08) scale=1+phase/0.08*0.12;       // quick expand
+  else if(phase<0.14) scale=1.12-(phase-0.08)/0.06*0.06; // partial release
+  else if(phase<0.2) scale=1.06+(phase-0.14)/0.06*0.08;  // second beat
+  else if(phase<0.3) scale=1.14-(phase-0.2)/0.1*0.14;    // full release
+  else scale=1;                                            // rest
+
+  // Outer ring pulse
+  c.beginPath();c.arc(cx,cy,s*.46,0,Math.PI*2);
+  c.strokeStyle=`rgba(255,30,60,${0.2+(scale-1)*3})`;
+  c.lineWidth=s*.016+((scale-1)*s*2);c.stroke();
+
+  c.save();
+  c.translate(cx,cy);
+  c.scale(scale,scale);
+
+  // Perfect heart path - takes up 82% of circle
+  const hw=s*.41;
+
+  // Heart gradient
+  const hg=c.createRadialGradient(-hw*.15,-hw*.15,0,0,hw*.1,hw*1.1);
+  hg.addColorStop(0,'#ff4466');
+  hg.addColorStop(0.4,'#ee1133');
+  hg.addColorStop(0.75,'#cc0022');
+  hg.addColorStop(1,'#880011');
+
+  c.fillStyle=hg;
+  c.shadowColor='#ff0033';
+  c.shadowBlur=18+(scale-1)*40;
+
+  // Perfect symmetrical heart using parametric curve
+  // Top center dip at (0, -hw*0.12)
+  // Two bumps peak at (±hw*0.5, -hw*0.25)
+  // Bottom point at (0, hw*0.75)
+  c.beginPath();
+  c.moveTo(0, -hw*0.12); // top center dip
+
+  // Left bump
+  c.bezierCurveTo(
+    -hw*0.15, -hw*0.52,  // control 1
+    -hw*0.85, -hw*0.52,  // control 2
+    -hw*0.85, -hw*0.05   // left edge
+  );
+  // Left side going down to bottom point
+  c.bezierCurveTo(
+    -hw*0.85, hw*0.35,   // control 1
+    -hw*0.2, hw*0.6,     // control 2
+    0, hw*0.75           // bottom point
+  );
+  // Right side going up
+  c.bezierCurveTo(
+    hw*0.2, hw*0.6,      // control 1
+    hw*0.85, hw*0.35,    // control 2
+    hw*0.85, -hw*0.05    // right edge
+  );
+  // Right bump
+  c.bezierCurveTo(
+    hw*0.85, -hw*0.52,   // control 1
+    hw*0.15, -hw*0.52,   // control 2
+    0, -hw*0.12          // back to top dip
+  );
+  c.closePath();
+  c.fill();
+
+  // Inner highlight for depth
+  const ig=c.createRadialGradient(-hw*.25,-hw*.28,0,-hw*.1,-hw*.1,hw*.6);
+  ig.addColorStop(0,'rgba(255,150,150,0.22)');
+  ig.addColorStop(1,'rgba(255,0,0,0)');
+  c.fillStyle=ig;
+  c.fill(); // fill same path (still clipped to heart via shadow, redraw)
+  // Redraw path for highlight
+  c.beginPath();
+  c.moveTo(0,-hw*0.12);
+  c.bezierCurveTo(-hw*0.15,-hw*0.52,-hw*0.85,-hw*0.52,-hw*0.85,-hw*0.05);
+  c.bezierCurveTo(-hw*0.85,hw*0.35,-hw*0.2,hw*0.6,0,hw*0.75);
+  c.bezierCurveTo(hw*0.2,hw*0.6,hw*0.85,hw*0.35,hw*0.85,-hw*0.05);
+  c.bezierCurveTo(hw*0.85,-hw*0.52,hw*0.15,-hw*0.52,0,-hw*0.12);
+  c.closePath();
+  c.fillStyle=ig;c.fill();
+
+  c.shadowBlur=0;
+
+  // B58 text - centered in heart body
+  const fontSize=s*.175;
+  c.font=`900 ${fontSize}px Orbitron,monospace`;
+  c.textAlign='center';
+  c.textBaseline='middle';
+  // White with slight shadow for legibility
+  c.shadowColor='rgba(0,0,0,0.6)';c.shadowBlur=8;
+  c.fillStyle='rgba(255,255,255,0.96)';
+  c.fillText('B58',0,hw*0.18);
+  c.shadowBlur=0;
+
+  c.restore();
+}
+
+// ── YIN YANG FIXED ────────────────────────────────────────
+// ── YIN YANG FIXED ────────────────────────────────────────
+function drawYinYang(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);
+  const bg=c.createRadialGradient(cx,cy,0,cx,cy,s*.5);
+  bg.addColorStop(0,'#0a0a0a');bg.addColorStop(1,'#000');
+  c.fillStyle=bg;c.fillRect(0,0,s,s);
+
+  const r=s*.38;
+  const rot=t*.008; // slow rotation
+
+  c.save();c.translate(cx,cy);c.rotate(rot);
+
+  // Chrome outer bezel
+  c.beginPath();c.arc(0,0,r*1.1,0,Math.PI*2);
+  const cg=c.createLinearGradient(-r,-r,r,r);
+  cg.addColorStop(0,'#666');cg.addColorStop(.4,'#999');cg.addColorStop(.6,'#777');cg.addColorStop(1,'#444');
+  c.fillStyle=cg;c.fill();
+
+  // Inner shadow ring
+  c.beginPath();c.arc(0,0,r*1.04,0,Math.PI*2);
+  c.fillStyle='#0a0a0a';c.fill();
+
+  // Main circle clip
+  c.save();c.beginPath();c.arc(0,0,r,0,Math.PI*2);c.clip();
+
+  // White half
+  c.fillStyle='#f0f0f0';c.fillRect(-r,-r,r*2,r*2);
+
+  // Black half
+  c.beginPath();c.arc(0,0,r,-Math.PI/2,Math.PI/2);c.closePath();
+  c.fillStyle='#0d0d0d';c.fill();
+
+  // Small white circle (top)
+  c.beginPath();c.arc(0,-r/2,r/2,0,Math.PI*2);
+  c.fillStyle='#f0f0f0';c.fill();
+
+  // Small black circle (bottom)
+  c.beginPath();c.arc(0,r/2,r/2,0,Math.PI*2);
+  c.fillStyle='#0d0d0d';c.fill();
+
+  // Dots
+  c.beginPath();c.arc(0,-r/2,r*.14,0,Math.PI*2);c.fillStyle='#0d0d0d';c.fill();
+  c.beginPath();c.arc(0,r/2,r*.14,0,Math.PI*2);c.fillStyle='#f0f0f0';c.fill();
+
+  // Shine
+  const sh=c.createRadialGradient(-r*.25,-r*.25,0,0,0,r);
+  sh.addColorStop(0,'rgba(255,255,255,0.08)');sh.addColorStop(1,'rgba(255,255,255,0)');
+  c.fillStyle=sh;c.fillRect(-r,-r,r*2,r*2);
+  c.restore();
+
+  // Outer border
+  c.beginPath();c.arc(0,0,r,0,Math.PI*2);
+  c.strokeStyle='rgba(255,255,255,0.06)';c.lineWidth=s*.005;c.stroke();
+
+  c.restore();
+}
+
+// ── SKULL FIXED (side angle gritty) ──────────────────────
+function drawSkull(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);
+  const bg=c.createRadialGradient(cx,cy*.8,0,cx,cy,s*.55);
+  bg.addColorStop(0,'#111');bg.addColorStop(1,'#000');
+  c.fillStyle=bg;c.fillRect(0,0,s,s);
+
+  c.save();c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);c.clip();
+
+  // Subtle grain texture
+  for(let i=0;i<600;i++){
+    const gx=Math.random()*s,gy=Math.random()*s;
+    c.beginPath();c.arc(gx,gy,.5,0,Math.PI*2);
+    c.fillStyle=`rgba(160,150,120,${Math.random()*.035})`;c.fill();
+  }
+
+  // Skull positioned slightly left for 3/4 view
+  const skx=cx-s*.02,sky=cy-s*.02;
+
+  // Cranium
+  const cg=c.createRadialGradient(skx-s*.1,sky-s*.12,0,skx,sky,s*.3);
+  cg.addColorStop(0,'#d0c898');cg.addColorStop(.5,'#b0a870');cg.addColorStop(1,'#3a3220');
+  c.beginPath();c.ellipse(skx,sky-s*.03,s*.26,s*.27,0.1,0,Math.PI*2);
+  c.fillStyle=cg;c.fill();
+
+  // Cheekbone
+  c.beginPath();c.ellipse(skx+s*.1,sky+s*.09,s*.17,s*.09,-0.15,0,Math.PI*2);
+  c.fillStyle='#a09870';c.fill();
+
+  // Jaw
+  c.beginPath();
+  c.moveTo(skx-s*.18,sky+s*.11);
+  c.bezierCurveTo(skx-s*.2,sky+s*.21,skx-s*.05,sky+s*.31,skx+s*.13,sky+s*.26);
+  c.bezierCurveTo(skx+s*.23,sky+s*.21,skx+s*.24,sky+s*.1,skx+s*.18,sky+s*.04);
+  c.bezierCurveTo(skx+s*.2,sky+s*.08,skx+s*.12,sky+s*.16,skx+s*.04,sky+s*.15);
+  c.bezierCurveTo(skx-s*.06,sky+s*.23,skx-s*.1,sky+s*.17,skx-s*.14,sky+s*.11);
+  c.closePath();
+  const jg=c.createLinearGradient(skx,sky+s*.1,skx,sky+s*.31);
+  jg.addColorStop(0,'#a09870');jg.addColorStop(1,'#6a6040');
+  c.fillStyle=jg;c.fill();
+
+  // Eye socket
+  c.beginPath();c.ellipse(skx+s*.05,sky-s*.04,s*.1,s*.095,0.2,0,Math.PI*2);
+  c.fillStyle='#060504';c.fill();
+  const eg=c.createRadialGradient(skx+s*.05,sky-s*.04,s*.02,skx+s*.05,sky-s*.04,s*.11);
+  eg.addColorStop(0,'rgba(0,0,0,0.95)');eg.addColorStop(1,'rgba(0,0,0,0)');
+  c.beginPath();c.ellipse(skx+s*.05,sky-s*.04,s*.115,s*.11,0.2,0,Math.PI*2);c.fillStyle=eg;c.fill();
+
+  // Nasal cavity
+  c.beginPath();c.moveTo(skx+s*.15,sky+s*.07);c.lineTo(skx+s*.1,sky+s*.15);c.lineTo(skx+s*.2,sky+s*.14);c.closePath();
+  c.fillStyle='#060504';c.fill();
+
+  // Brow ridge
+  c.strokeStyle='rgba(40,36,22,0.6)';c.lineWidth=s*.011;c.lineCap='round';
+  c.beginPath();c.moveTo(skx-s*.18,sky-s*.08);
+  c.bezierCurveTo(skx-s*.04,sky-s*.17,skx+s*.08,sky-s*.16,skx+s*.14,sky-s*.08);c.stroke();
+
+  // Cheekbone line
+  c.strokeStyle='rgba(30,26,14,0.5)';c.lineWidth=s*.008;
+  c.beginPath();c.moveTo(skx+s*.14,sky-s*.04);
+  c.bezierCurveTo(skx+s*.2,sky+s*.05,skx+s*.22,sky+s*.11,skx+s*.18,sky+s*.15);c.stroke();
+
+  // Teeth
+  const ty=sky+s*.2,tx=skx+s*.04;
+  for(let i=0;i<6;i++){
+    const ttx=tx+i*s*.034,ttw=s*.026,tth=s*.06*(1-i*.05);
+    const tg=c.createLinearGradient(ttx,ty,ttx,ty+tth);
+    tg.addColorStop(0,'#e0d8b8');tg.addColorStop(1,'#b0a880');
+    c.fillStyle=tg;c.beginPath();c.roundRect(ttx,ty,ttw,tth,s*.003);c.fill();
+    c.strokeStyle='rgba(30,26,14,0.4)';c.lineWidth=s*.003;c.stroke();
+  }
+  // Tooth gaps
+  for(let i=0;i<5;i++){
+    c.fillStyle='rgba(0,0,0,0.55)';
+    c.fillRect(tx+(i+1)*s*.034-s*.004,ty,s*.004,s*.04);
+  }
+  // Cracks
+  c.strokeStyle='rgba(20,18,10,0.45)';c.lineWidth=s*.005;c.lineCap='round';
+  c.beginPath();c.moveTo(skx-s*.03,sky-s*.25);c.lineTo(skx,sky-s*.14);c.lineTo(skx-s*.05,sky-s*.08);c.stroke();
+  c.beginPath();c.moveTo(skx+s*.1,sky-s*.22);c.lineTo(skx+s*.07,sky-s*.12);c.stroke();
+
+  // Vignette
+  const vg=c.createRadialGradient(cx,cy,s*.12,cx,cy,s*.46);
+  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.7)');
+  c.fillStyle=vg;c.fillRect(0,0,s,s);
+  c.restore();
+
+  c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);
+  c.strokeStyle='rgba(100,90,60,0.3)';c.lineWidth=s*.018;c.stroke();
+}
+
+// ── TACHOMETER FIXED ─────────────────────────────────────
+function drawTach(c,s,t){
+  const cx=s/2,cy=s/2+s*.07;
+  c.clearRect(0,0,s,s);
+  const bg=c.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+  bg.addColorStop(0,'#0a0a0a');bg.addColorStop(1,'#000');
+  c.fillStyle=bg;c.fillRect(0,0,s,s);
+
+  const r=s*.35,startA=Math.PI*.75,endA=Math.PI*2.25;
+
+  // Smooth RPM simulation - idle to redline and back
+  const cycle=t*.018;
+  let rpm;
+  const phase=cycle%(Math.PI*2);
+  if(phase<Math.PI*.4) rpm=0.1+phase/Math.PI*.4*.3; // idle to low
+  else if(phase<Math.PI*.9) rpm=0.4+(phase-Math.PI*.4)/(Math.PI*.5)*.55; // building up
+  else if(phase<Math.PI*1.1) rpm=0.95+(Math.sin((phase-Math.PI*.9)*Math.PI/.2))*.04; // near redline
+  else if(phase<Math.PI*1.6) rpm=0.95-(phase-Math.PI*1.1)/(Math.PI*.5)*.7; // dropping
+  else rpm=0.25-(phase-Math.PI*1.6)/(Math.PI*.4)*.15; // settling to idle
+
+  rpm=Math.max(0.08,Math.min(0.99,rpm));
+  const needleA=startA+(endA-startA)*rpm;
+
+  // Track background
+  c.beginPath();c.arc(cx,cy,r,startA,endA);
+  c.strokeStyle='#141414';c.lineWidth=s*.05;c.lineCap='butt';c.stroke();
+
+  // Colored arc
+  const ag=c.createLinearGradient(cx-r,cy,cx+r,cy);
+  ag.addColorStop(0,'#00cc44');ag.addColorStop(.65,'#ffcc00');ag.addColorStop(.85,'#ff6600');ag.addColorStop(1,'#ff0000');
+  c.beginPath();c.arc(cx,cy,r,startA,needleA);
+  c.strokeStyle=ag;c.lineWidth=s*.038;
+  c.shadowColor=rpm>.85?'rgba(255,50,0,0.5)':'rgba(0,200,0,0.2)';
+  c.shadowBlur=rpm>.85?12:4;c.stroke();c.shadowBlur=0;
+
+  // Redline indicator
+  c.beginPath();c.arc(cx,cy,r,startA+(endA-startA)*.85,endA);
+  c.strokeStyle='rgba(255,0,0,0.2)';c.lineWidth=s*.05;c.stroke();
+
+  // Tick marks + numbers
+  const labels=[0,1,2,3,4,5,6,7,8];
+  for(let i=0;i<=8;i++){
+    const a=startA+(endA-startA)*i/8;
+    const isMaj=true;
+    c.strokeStyle=i>=7?'rgba(255,50,0,0.8)':'rgba(255,255,255,0.5)';
+    c.lineWidth=s*.009;
+    c.beginPath();
+    c.moveTo(cx+Math.cos(a)*r*.82,cy+Math.sin(a)*r*.82);
+    c.lineTo(cx+Math.cos(a)*r*.96,cy+Math.sin(a)*r*.96);c.stroke();
+    // Minor ticks
+    if(i<8){
+      for(let j=1;j<5;j++){
+        const ma=startA+(endA-startA)*(i*4+j)/(8*4);
+        c.strokeStyle='rgba(255,255,255,0.15)';c.lineWidth=s*.005;
+        c.beginPath();
+        c.moveTo(cx+Math.cos(ma)*r*.9,cy+Math.sin(ma)*r*.9);
+        c.lineTo(cx+Math.cos(ma)*r*.96,cy+Math.sin(ma)*r*.96);c.stroke();
+      }
+    }
+    c.font=`600 ${s*.052}px Orbitron,monospace`;
+    c.textAlign='center';c.textBaseline='middle';
+    c.fillStyle=i>=7?'rgba(255,80,0,0.9)':'rgba(255,255,255,0.55)';
+    c.fillText(labels[i],cx+Math.cos(a)*r*.68,cy+Math.sin(a)*r*.68);
+  }
+
+  // Label
+  c.font=`400 ${s*.045}px Orbitron,monospace`;
+  c.textAlign='center';c.fillStyle='rgba(255,255,255,0.2)';
+  c.fillText('RPM ×1000',s/2,s*.28);
+
+  // Needle
+  c.save();c.translate(cx,cy);c.rotate(needleA);
+  c.shadowColor='#ff2200';c.shadowBlur=12;
+  c.fillStyle='#ff3300';
+  c.beginPath();c.moveTo(-s*.02,0);c.lineTo(r*.8,s*.008);c.lineTo(r*.8,-s*.008);c.closePath();c.fill();
+  c.fillStyle='#ff6600';
+  c.beginPath();c.moveTo(-s*.02,0);c.lineTo(-s*.06,s*.015);c.lineTo(-s*.06,-s*.015);c.closePath();c.fill();
+  c.shadowBlur=0;c.restore();
+
+  // Center cap
+  const capg=c.createRadialGradient(cx-s*.01,cy-s*.01,0,cx,cy,s*.042);
+  capg.addColorStop(0,'#777');capg.addColorStop(1,'#1a1a1a');
+  c.beginPath();c.arc(cx,cy,s*.042,0,Math.PI*2);c.fillStyle=capg;c.fill();
+  c.strokeStyle='#333';c.lineWidth=s*.004;c.stroke();
+}
+
+// ── RAIN FIXED (glass precipitation) ─────────────────────
+function drawRain(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);
+  const bg=c.createRadialGradient(cx,cy*.6,0,cx,cy*1.3,s*.6);
+  bg.addColorStop(0,'#080c14');bg.addColorStop(.5,'#040810');bg.addColorStop(1,'#000204');
+  c.fillStyle=bg;c.fillRect(0,0,s,s);
+  c.save();c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);c.clip();
+
+  // Background city lights bokeh
+  for(let i=0;i<12;i++){
+    const bx=(Math.sin(i*73.1)*.4+.5)*s;
+    const by=(Math.cos(i*51.3)*.4+.5)*s;
+    const br=s*.04+Math.sin(i*2.3)*s*.02;
+    const bg2=c.createRadialGradient(bx,by,0,bx,by,br);
+    const cols=['rgba(255,200,100','rgba(200,220,255','rgba(255,150,150','rgba(150,200,255'];
+    const col=cols[i%4];
+    bg2.addColorStop(0,`${col},0.12)`);bg2.addColorStop(1,`${col},0)`);
+    c.fillStyle=bg2;c.fillRect(bx-br,by-br,br*2,br*2);
+  }
+
+  // Rain drops - vertical with angle
+  const angle=0.15; // slight angle
+  for(let i=0;i<40;i++){
+    const seed=i*137.508;
+    const speed=1.2+Math.sin(seed*.7)*.5;
+    const x=((Math.sin(seed)*.5+.5)*s*1.2)-s*.1;
+    const baseY=(t*speed*.9+seed*11.3)%(s*1.4)-s*.2;
+    const len=s*.055+Math.sin(seed*2.1)*s*.03;
+    const alpha=.25+Math.sin(seed*1.7)*.12;
+    const w=s*.003+Math.sin(seed*3.1)*s*.001;
+
+    const x2=x+Math.sin(angle)*len;
+    const y2=baseY+Math.cos(angle)*len;
+
+    const dg=c.createLinearGradient(x,baseY,x2,y2);
+    dg.addColorStop(0,'rgba(180,210,255,0)');
+    dg.addColorStop(.5,`rgba(200,225,255,${alpha})`);
+    dg.addColorStop(1,`rgba(220,235,255,${alpha*1.4})`);
+    c.strokeStyle=dg;c.lineWidth=w;c.lineCap='round';
+    c.beginPath();c.moveTo(x,baseY);c.lineTo(x2,y2);c.stroke();
+  }
+
+  // Water trails on glass surface
+  for(let i=0;i<8;i++){
+    const tx=(Math.sin(i*53.7)*.4+.5)*s;
+    const speed=0.3+Math.sin(i*2.9)*.15;
+    const ty=(t*speed*.5+i*67.3)%(s*.8)+s*.1;
+    const tl=s*.08+Math.sin(i*3.1+t*.02)*s*.04;
+
+    c.strokeStyle=`rgba(180,215,255,${0.15+Math.sin(i+t*.03)*.07})`;
+    c.lineWidth=s*.006;c.lineCap='round';
+    c.beginPath();
+    c.moveTo(tx,ty);
+    // Wiggly trail
+    for(let j=1;j<=6;j++){
+      const wy=ty+j*tl/6;
+      const wx=tx+Math.sin(i*3.7+j*.8+t*.02)*s*.015;
+      c.lineTo(wx,wy);
+    }
+    c.stroke();
+    // Water drop at bottom
+    c.beginPath();c.arc(tx+Math.sin(i*3.7+t*.02)*s*.015,ty+tl,s*.008,0,Math.PI*2);
+    c.fillStyle=`rgba(200,225,255,${0.2+Math.sin(i+t*.03)*.1})`;c.fill();
+  }
+
+  // Glass reflection sheen
+  const sheen=c.createLinearGradient(0,0,s,s*.3);
+  sheen.addColorStop(0,'rgba(180,210,255,0.02)');
+  sheen.addColorStop(.5,'rgba(200,225,255,0.05)');
+  sheen.addColorStop(1,'rgba(180,210,255,0.01)');
+  c.fillStyle=sheen;c.fillRect(0,0,s,s);
+
+  c.restore();
+  c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);
+  c.strokeStyle='rgba(150,200,255,0.15)';c.lineWidth=s*.016;c.stroke();
+}
+
+// ── PHOENIX ───────────────────────────────────────────────
+function drawPhoenix(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);
+  const bg=c.createRadialGradient(cx,cy,0,cx,cy,s*.5);
+  bg.addColorStop(0,'#100400');bg.addColorStop(1,'#000');
+  c.fillStyle=bg;c.fillRect(0,0,s,s);
+  c.save();c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);c.clip();
+
+  // Flame glow from bottom
+  const fg=c.createRadialGradient(cx,cy+s*.2,0,cx,cy+s*.2,s*.4);
+  fg.addColorStop(0,'rgba(255,150,0,0.4)');fg.addColorStop(.5,'rgba(255,50,0,0.15)');fg.addColorStop(1,'rgba(255,0,0,0)');
+  c.fillStyle=fg;c.fillRect(0,0,s,s);
+
+  const flicker=Math.sin(t*.12)*0.03;
+  c.save();c.translate(cx,cy+s*.05);c.scale(1+flicker,1-flicker);
+
+  // Wing colors - gradient orange/gold
+  const wingCol=c.createLinearGradient(-s*.4,-s*.3,s*.4,s*.2);
+  wingCol.addColorStop(0,'#ffaa00');wingCol.addColorStop(.3,'#ff6600');wingCol.addColorStop(.6,'#ff3300');wingCol.addColorStop(1,'#cc1100');
+
+  c.fillStyle=wingCol;
+  c.shadowColor='#ff6600';c.shadowBlur=20+Math.sin(t*.08)*8;
+
+  // Left wing
+  c.beginPath();
+  c.moveTo(0,-s*.05);
+  c.bezierCurveTo(-s*.08,-s*.18,-s*.22,-s*.22,-s*.35,-s*.12);
+  c.bezierCurveTo(-s*.4,-s*.05,-s*.38,s*.05,-s*.28,s*.08);
+  c.bezierCurveTo(-s*.18,s*.12,-s*.08,s*.05,0,-s*.02);
+  c.closePath();c.fill();
+
+  // Left wing feather tips
+  [[-s*.38,-s*.08,-s*.45,-s*.22],[-s*.32,-s*.14,-s*.36,-s*.3],[-s*.22,-s*.2,-s*.22,-s*.36],[-s*.1,-s*.2,-s*.06,-s*.36]].forEach(([x1,y1,x2,y2])=>{
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);
+    c.strokeStyle='rgba(255,200,0,0.7)';c.lineWidth=s*.018;c.lineCap='round';c.stroke();
+  });
+
+  // Right wing (mirror)
+  c.beginPath();
+  c.moveTo(0,-s*.05);
+  c.bezierCurveTo(s*.08,-s*.18,s*.22,-s*.22,s*.35,-s*.12);
+  c.bezierCurveTo(s*.4,-s*.05,s*.38,s*.05,s*.28,s*.08);
+  c.bezierCurveTo(s*.18,s*.12,s*.08,s*.05,0,-s*.02);
+  c.closePath();c.fill();
+
+  [[s*.38,-s*.08,s*.45,-s*.22],[s*.32,-s*.14,s*.36,-s*.3],[s*.22,-s*.2,s*.22,-s*.36],[s*.1,-s*.2,s*.06,-s*.36]].forEach(([x1,y1,x2,y2])=>{
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);
+    c.strokeStyle='rgba(255,200,0,0.7)';c.lineWidth=s*.018;c.lineCap='round';c.stroke();
+  });
+
+  // Body
+  const bodyCol=c.createLinearGradient(0,-s*.25,0,s*.2);
+  bodyCol.addColorStop(0,'#ffcc00');bodyCol.addColorStop(.4,'#ff8800');bodyCol.addColorStop(1,'#cc2200');
+  c.fillStyle=bodyCol;
+  c.beginPath();
+  c.ellipse(0,-s*.06,s*.06,s*.22,0,0,Math.PI*2);
+  c.fill();
+
+  // Head
+  c.beginPath();c.arc(0,-s*.25,s*.06,0,Math.PI*2);
+  c.fillStyle='#ffcc00';c.fill();
+
+  // Beak
+  c.beginPath();c.moveTo(s*.06,-s*.26);c.lineTo(s*.14,-s*.24);c.lineTo(s*.06,-s*.22);c.closePath();
+  c.fillStyle='#ff8800';c.fill();
+
+  // Eye
+  c.beginPath();c.arc(s*.03,-s*.265,s*.018,0,Math.PI*2);c.fillStyle='#000';c.fill();
+  c.beginPath();c.arc(s*.03,-s*.265,s*.009,0,Math.PI*2);c.fillStyle='#ff4400';c.shadowColor='#ff4400';c.shadowBlur=6;c.fill();c.shadowBlur=0;
+
+  // Tail flames
+  for(let i=0;i<5;i++){
+    const tx=(i-2)*s*.06;
+    const ty=s*.16;
+    const tlen=s*.12+Math.sin(t*.08+i)*.04*s;
+    const flameG=c.createLinearGradient(tx,ty,tx,ty+tlen);
+    flameG.addColorStop(0,'rgba(255,150,0,0.8)');flameG.addColorStop(1,'rgba(255,50,0,0)');
+    c.fillStyle=flameG;
+    c.beginPath();c.ellipse(tx,ty+tlen/2,s*.025,tlen/2,Math.sin(t*.06+i)*.3,0,Math.PI*2);c.fill();
+  }
+
+  c.shadowBlur=0;c.restore();
+
+  // Ember particles
+  for(let i=0;i<15;i++){
+    const px=cx+(Math.sin(i*73.1+t*.05)*.4)*s;
+    const py=cy+(Math.cos(i*51.3+t*.04)*.4)*s;
+    const pr=s*.008+Math.sin(i+t*.1)*s*.004;
+    c.beginPath();c.arc(px,py,pr,0,Math.PI*2);
+    c.fillStyle=`rgba(255,${100+i*10},0,${0.3+Math.sin(i+t*.08)*.2})`;c.fill();
+  }
+
+  c.restore();
+  c.beginPath();c.arc(cx,cy,s*.44,0,Math.PI*2);
+  c.strokeStyle='rgba(255,100,0,0.3)';c.lineWidth=s*.018;c.shadowColor='#ff4400';c.shadowBlur=10;c.stroke();c.shadowBlur=0;
+}
+
+// ── GLITCH BMW (slower, color presets) ───────────────────
+let glitchColors={blue:'#1a5fad',blueDark:'#0d3d7a',white:'#f5f5f5',whiteDark:'#d0d0d0',ring:'#0a0a0a',chrome:'#777777'};
+
+function drawGlitch(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);c.fillStyle='#000';c.fillRect(0,0,s,s);
+  drawBMW(c,s,glitchColors.blue,glitchColors.blueDark,glitchColors.white,glitchColors.whiteDark,glitchColors.ring,glitchColors.chrome);
+  // Slower glitch - only triggers occasionally
+  const glitchTime=Math.sin(t*.038)*Math.sin(t*.026)*Math.sin(t*.018);
+  if(Math.abs(glitchTime)>.5){
+    const intensity=(Math.abs(glitchTime)-.5)/.5;
+    const slices=Math.floor(2+intensity*4);
+    for(let i=0;i<slices;i++){
+      const gy=Math.random()*s;
+      const gh=Math.random()*s*.06+s*.008;
+      const gx=(Math.random()-.5)*s*.12;
+      try{
+        const imageData=c.getImageData(0,gy,s,gh);
+        c.putImageData(imageData,gx,gy);
+      }catch(e){}
+    }
+    // Scan line
+    c.fillStyle=`rgba(0,255,255,${intensity*.08})`;
+    c.fillRect(0,cy+Math.sin(t*.08)*s*.3,s,s*.006);
+    c.fillStyle=`rgba(255,0,100,${intensity*.05})`;
+    c.fillRect(0,cy-Math.sin(t*.06)*s*.2,s,s*.004);
+  }
+}
+
+// ── BMW MERCEDES GLITCH ───────────────────────────────────
+function drawBMWMercGlitch(c,s,t){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);c.fillStyle='#000';c.fillRect(0,0,s,s);
+
+  // Cycle: BMW for ~4s, glitch transition ~1s, Mercedes ~4s, glitch back
+  const cycle=360; // frames for full cycle
+  const f=t%cycle;
+  const showMerc=f>cycle*.45&&f<cycle*.9;
+  const inTransition=(f>cycle*.38&&f<cycle*.52)||(f>cycle*.83&&f<cycle*.97);
+
+  // Draw BMW
+  if(!showMerc||inTransition){
+    drawBMW(c,s,glitchColors.blue,glitchColors.blueDark,glitchColors.white,glitchColors.whiteDark,glitchColors.ring,glitchColors.chrome);
+  }
+
+  // Draw Mercedes logo
+  if(showMerc||inTransition){
+    const alpha=showMerc&&!inTransition?1:inTransition?Math.abs(Math.sin(f*.3)):0;
+    c.globalAlpha=alpha;
+    c.fillStyle='#000';
+    if(inTransition) c.fillRect(0,0,s,s);
+
+    // Mercedes star
+    const r=s*.35;
+    c.beginPath();c.arc(cx,cy,r*1.08,0,Math.PI*2);
+    // Chrome ring
+    const cg2=c.createRadialGradient(cx-r*.3,cy-r*.3,0,cx,cy,r*1.1);
+    cg2.addColorStop(0,'#ddd');cg2.addColorStop(.4,'#aaa');cg2.addColorStop(1,'#555');
+    c.fillStyle=cg2;c.fill();
+    c.beginPath();c.arc(cx,cy,r*.97,0,Math.PI*2);c.fillStyle='#111';c.fill();
+    c.beginPath();c.arc(cx,cy,r*.88,0,Math.PI*2);
+    const sg=c.createRadialGradient(cx-r*.2,cy-r*.2,0,cx,cy,r);
+    sg.addColorStop(0,'#2a2a2a');sg.addColorStop(1,'#111');
+    c.fillStyle=sg;c.fill();
+
+    // Three-pointed star
+    c.save();c.translate(cx,cy);
+    const starR=r*.78;
+    const innerR=r*.28;
+    c.fillStyle='#c8c8c8';
+    c.shadowColor='rgba(200,200,200,0.4)';c.shadowBlur=10;
+    for(let i=0;i<3;i++){
+      const a=Math.PI*2/3*i-Math.PI/2;
+      const next=Math.PI*2/3*(i+1)-Math.PI/2;
+      const mid=(a+next)/2;
+      c.beginPath();
+      c.moveTo(Math.cos(a)*innerR,Math.sin(a)*innerR);
+      c.lineTo(Math.cos(a-(Math.PI/3)*.15)*starR,Math.sin(a-(Math.PI/3)*.15)*starR);
+      c.lineTo(Math.cos(a)*starR,Math.sin(a)*starR);
+      c.lineTo(Math.cos(a+(Math.PI/3)*.15)*starR,Math.sin(a+(Math.PI/3)*.15)*starR);
+      c.lineTo(Math.cos(mid)*innerR,Math.sin(mid)*innerR);
+      c.closePath();c.fill();
+    }
+    // Center circle
+    c.beginPath();c.arc(0,0,innerR,0,Math.PI*2);
+    const cg3=c.createRadialGradient(-innerR*.2,-innerR*.2,0,0,0,innerR);
+    cg3.addColorStop(0,'#ddd');cg3.addColorStop(1,'#888');
+    c.fillStyle=cg3;c.fill();
+    // Outer ring line
+    c.beginPath();c.arc(0,0,starR*1.06,0,Math.PI*2);
+    c.strokeStyle='rgba(180,180,180,0.4)';c.lineWidth=s*.012;c.stroke();
+    c.shadowBlur=0;c.restore();
+    c.globalAlpha=1;
+  }
+
+  // Glitch effect during transitions
+  if(inTransition){
+    const gi=Math.sin(f*.4);
+    for(let i=0;i<Math.floor(3+Math.abs(gi)*5);i++){
+      const gy=Math.random()*s;
+      const gh=Math.random()*s*.07+s*.008;
+      const gx=(Math.random()-.5)*s*.18;
+      try{const id=c.getImageData(0,gy,s,gh);c.putImageData(id,gx,gy);}catch(e){}
+    }
+    c.fillStyle=`rgba(0,255,255,${Math.abs(gi)*.08})`;
+    c.fillRect(0,cy+Math.sin(f*.15)*s*.3,s,s*.005);
+    c.fillStyle=`rgba(255,0,100,${Math.abs(gi)*.06})`;
+    c.fillRect(0,cy-Math.cos(f*.12)*s*.2,s,s*.004);
+  }
+}
 const presets=[
   {name:'Classic BMW',desc:'Original blue & white roundel',cat:[0,1],draw:(c,s,t)=>drawBMW(c,s,'#1a5fad','#0d3d7a','#f5f5f5','#d0d0d0','#0a0a0a','#777777')},
   {name:'Chrome BMW',desc:'White & chrome luxury finish',cat:[0,1],draw:(c,s,t)=>drawBMW(c,s,'#cccccc','#999999','#ffffff','#eeeeee','#111111','#aaaaaa')},
@@ -1394,30 +2231,39 @@ const presets=[
   {name:'Gold Edition',desc:'Prestige gold & white',cat:[0,1],draw:(c,s,t)=>drawBMW(c,s,'#c9a84c','#8a6914','#fff8e7','#eeddb0','#0a0a0a','#c9a84c')},
   {name:'Neon Blue',desc:'Electric glow edition',cat:[0,1,2],draw:(c,s,t)=>drawBMWNeon(c,s,'#00e5ff')},
   {name:'All Black',desc:'Blacked out stealth',cat:[0,1],draw:(c,s,t)=>drawAllBlack(c,s)},
-  {name:'B58 Crown',desc:'Crown on the B, tilted',cat:[0,2],draw:(c,s,t)=>drawB58(c,s)},
-  {name:'M Logo',desc:'Minimal M letterform',cat:[0,2],draw:(c,s,t)=>drawMLogo(c,s)},
-  {name:'Will Run',desc:'Word flip animation',cat:[0,3],draw:(c,s,t)=>drawTextFlip(c,s,'WILL','RUN','#4fc3f7',t)},
+  {name:'B58 Crown',desc:'Crown on the B, tilted',cat:[0,1,2],draw:(c,s,t)=>drawB58(c,s)},
+  {name:'M Logo',desc:'BMW M tri-color logo',cat:[0,1],draw:(c,s,t)=>drawMLogoReal(c,s)},
+  {name:'Neon M',desc:'Color cycling M logo',cat:[0,1,2],draw:(c,s,t)=>drawNeonM(c,s,t)},
+  {name:'Will Run',desc:'Word flip animation',cat:[0,2],draw:(c,s,t)=>drawTextFlip(c,s,'WILL','RUN','#4fc3f7',t)},
   {name:"Won't Run",desc:'Word flip animation',cat:[0,3],draw:(c,s,t)=>drawTextFlip(c,s,"WON'T",'RUN','#ff4444',t)},
-  {name:'Snowflake',desc:'Ice crystal rotation',cat:[0,3],draw:(c,s,t)=>drawSnowflake(c,s,t)},
-  {name:'Flames',desc:'Multi-layer fire',cat:[0,3],draw:(c,s,t)=>drawFlames(c,s,t)},
-  {name:'Lightning',desc:'Electric storm bolt',cat:[0,3],draw:(c,s,t)=>drawLightning(c,s,t)},
-  {name:'Speedometer',desc:'Live animated gauge',cat:[0,3],draw:(c,s,t)=>drawSpeedometer(c,s,t)},
-  {name:'Heartbeat',desc:'ECG pulse line',cat:[0,3],draw:(c,s,t)=>drawHeartbeat(c,s,t)},
-  {name:'Crosshair',desc:'Tactical reticle',cat:[0,3],draw:(c,s,t)=>drawCrosshair(c,s,t)},
+  {name:'Snowflake',desc:'Ice crystal rotation',cat:[0,2],draw:(c,s,t)=>drawSnowflake(c,s,t)},
+  {name:'Flames',desc:'Multi-layer fire',cat:[0,2],draw:(c,s,t)=>drawFlames(c,s,t)},
+  {name:'Lightning',desc:'Electric storm bolt',cat:[0,2],draw:(c,s,t)=>drawLightning(c,s,t)},
+  {name:'Speedometer',desc:'Live animated gauge',cat:[0,2],draw:(c,s,t)=>drawSpeedometer(c,s,t)},
+  {name:'Heartbeat',desc:'ECG pulse line',cat:[0,2],draw:(c,s,t)=>drawHeartbeat(c,s,t)},
+  {name:'B58 Pulse',desc:'Heartbeat with B58',cat:[0,2],draw:(c,s,t)=>drawB58Heart(c,s,t)},
+  {name:'Crosshair',desc:'Tactical reticle',cat:[0,2],draw:(c,s,t)=>drawCrosshair(c,s,t)},
   {name:'Sharingan',desc:'Three-tomoe eye',cat:[0,3],draw:(c,s,t)=>drawSharingan(c,s,t)},
   {name:'Yin Yang',desc:'Chrome balance symbol',cat:[0,3],draw:(c,s,t)=>drawYinYang(c,s)},
   {name:'Night Sky',desc:'Moon & stars',cat:[0,3],draw:(c,s,t)=>drawNightSky(c,s,t)},
-  {name:'Skull',desc:'Gritty side-angle skull',cat:[0,3],draw:(c,s,t)=>drawSkull(c,s)},
-  {name:'Infinity',desc:'Cinematic light loop',cat:[0,3],draw:(c,s,t)=>drawInfinity(c,s,t)},
-  {name:'Hex Grid',desc:'Animated hex pattern',cat:[0,3],draw:(c,s,t)=>drawHex(c,s,t)},
+  {name:'Infinity',desc:'Cinematic light loop',cat:[0,2],draw:(c,s,t)=>drawInfinity(c,s,t)},
+  {name:'Hex Grid',desc:'Animated hex pattern',cat:[0,2],draw:(c,s,t)=>drawHex(c,s,t)},
   {name:'Checkered',desc:'Racing flag pattern',cat:[0,3],draw:(c,s,t)=>drawCheckered(c,s)},
-  {name:'Burnout',desc:'BMW M tire burnout loop',cat:[0,2,3],draw:(c,s,t)=>drawTireBurnout(c,s,t)},
-  {name:'Dragon',desc:'Fire-breathing side profile',cat:[0,3],draw:(c,s,t)=>drawDragon(c,s)},
+  {name:'Rain',desc:'Raindrops on glass',cat:[0,2],draw:(c,s,t)=>drawRain(c,s,t)},
+  {name:'Tachometer',desc:'Animated RPM gauge',cat:[0,2],draw:(c,s,t)=>drawTach(c,s,t)},
+  {name:'Matrix',desc:'Falling code rain',cat:[0,2],draw:(c,s,t)=>drawMatrix(c,s,t)},
+  {name:'Glitch',desc:'Glitch effect',cat:[0,1,2],draw:(c,s,t)=>drawGlitch(c,s,t)},
+  {name:'Glitch BMW',desc:'Corrupted BMW logo',cat:[0,1,2],draw:(c,s,t)=>drawGlitch(c,s,t)},
+  {name:'BMW↔Merc',desc:'Glitches between logos',cat:[0,1,2],draw:(c,s,t)=>drawBMWMercGlitch(c,s,t)},
+  {name:'Wave',desc:'Flowing color gradient',cat:[0,2],draw:(c,s,t)=>drawGradientWave(c,s,t)},
+  {name:'Police',desc:'Red & blue flash',cat:[0,2],draw:(c,s,t)=>drawPolice(c,s,t)},
+  {name:'Burnout',desc:'BMW M tire burnout loop',cat:[0,2],draw:(c,s,t)=>drawTireBurnout(c,s,t)},
+  {name:'Phoenix',desc:'Rising fire bird',cat:[0,3],draw:(c,s,t)=>drawPhoenix(c,s,t)},
   {name:'Clock',desc:'Luxury watch dial',cat:[0,3],draw:(c,s,t)=>drawClock(c,s,t)},
   {name:'Compass',desc:'Navigation rose',cat:[0,3],draw:(c,s,t)=>drawCompass(c,s,t)},
   {name:'Scorpion',desc:'Detailed scorpion',cat:[0,3],draw:(c,s,t)=>drawScorpion(c,s)},
   {name:'Providence',desc:'Eye of Providence',cat:[0,3],draw:(c,s,t)=>drawEye(c,s,t)},
-  {name:'Angel/Devil',desc:'Flip between both',cat:[0,3],draw:(c,s,t)=>drawAngelDevil(c,s,t)},
+  {name:'Angel/Devil',desc:'Flip between both',cat:[0,2],draw:(c,s,t)=>drawAngelDevil(c,s,t)},
 ];
 
 // ── UPLOAD SYSTEM ─────────────────────────────────────────
@@ -1436,12 +2282,13 @@ function makeImagePreset(name, url, isGif){
   return {
     name, desc:'Custom upload', cat:[0,4], isImage:true, isGif, url,
     draw:(c,s)=>{
+      if(isGif) return; // GIFs handled by img overlay, not canvas
       c.clearRect(0,0,s,s);
       c.save();c.beginPath();c.arc(s/2,s/2,s/2,0,Math.PI*2);c.clip();
       const im = new Image();
       im.src = url;
       if(im.complete && im.naturalWidth > 0) c.drawImage(im,0,0,s,s);
-      else im.onload = () => c.drawImage(im,0,0,s,s);
+      else im.onload = () => { c.save();c.beginPath();c.arc(s/2,s/2,s/2,0,Math.PI*2);c.clip();c.drawImage(im,0,0,s,s);c.restore(); };
       c.restore();
     }
   };
@@ -1577,9 +2424,85 @@ document.getElementById('fileInput').addEventListener('change', (e)=>{
   });
 });
 
-// Restore saved uploads
+// Restore saved uploads - preserve isGif flag
 loadUserPresets();
-userPresets.forEach(up => presets.push(makeImagePreset(up.name, up.url, false)));
+userPresets.forEach(up => presets.push(makeImagePreset(up.name, up.url, up.isGif || false)));
+
+let pendingDeleteIdx = -1;
+let deleteTimerInterval = null;
+let clearTimerInterval = null;
+
+function showDeleteConfirm(idx){
+  pendingDeleteIdx = idx;
+  document.getElementById('deleteModal').style.display='flex';
+  document.getElementById('deleteTimer').style.display='none';
+  document.getElementById('deleteConfirmBtn').disabled=false;
+  document.getElementById('deleteConfirmBtn').textContent='Yes, Delete';
+}
+function cancelDelete(){
+  document.getElementById('deleteModal').style.display='none';
+  if(deleteTimerInterval){clearInterval(deleteTimerInterval);deleteTimerInterval=null;}
+  pendingDeleteIdx=-1;
+}
+function startDeleteTimer(){
+  let count=3;
+  const timerEl=document.getElementById('deleteTimer');
+  const btn=document.getElementById('deleteConfirmBtn');
+  timerEl.style.display='block';
+  timerEl.textContent=count;
+  btn.disabled=true;btn.textContent='Wait...';
+  deleteTimerInterval=setInterval(()=>{
+    count--;
+    timerEl.textContent=count;
+    if(count<=0){
+      clearInterval(deleteTimerInterval);deleteTimerInterval=null;
+      // After timer - enable button to confirm final delete
+      btn.disabled=false;
+      btn.textContent='Confirm Delete';
+      btn.onclick=()=>{
+        document.getElementById('deleteModal').style.display='none';
+        deleteUserPreset(pendingDeleteIdx);
+        pendingDeleteIdx=-1;
+        btn.onclick=startDeleteTimer; // reset
+      };
+    }
+  },1000);
+}
+
+function clearAllUploads(){
+  document.getElementById('clearModal').style.display='flex';
+  document.getElementById('clearTimer').style.display='none';
+  document.getElementById('clearConfirmBtn').disabled=false;
+  document.getElementById('clearConfirmBtn').textContent='Yes, Delete All';
+}
+function cancelClear(){
+  document.getElementById('clearModal').style.display='none';
+  if(clearTimerInterval){clearInterval(clearTimerInterval);clearTimerInterval=null;}
+}
+function startClearTimer(){
+  let count=3;
+  const timerEl=document.getElementById('clearTimer');
+  const btn=document.getElementById('clearConfirmBtn');
+  timerEl.style.display='block';timerEl.textContent=count;
+  btn.disabled=true;btn.textContent='Wait...';
+  clearTimerInterval=setInterval(()=>{
+    count--;timerEl.textContent=count;
+    if(count<=0){
+      clearInterval(clearTimerInterval);clearTimerInterval=null;
+      btn.disabled=false;
+      btn.textContent='Confirm Clear All';
+      btn.onclick=()=>{
+        document.getElementById('clearModal').style.display='none';
+        const count2=userPresets.length;
+        presets.splice(BUILTIN_COUNT,count2);
+        userPresets=[];saveUserPresets();
+        if(cur>=presets.length)cur=0;
+        selectPreset(cur);buildGrid(activeTab);
+        btn.onclick=startClearTimer; // reset
+      };
+    }
+  },1000);
+}
 
 function deleteUserPreset(globalIdx){
   const upIdx = globalIdx - BUILTIN_COUNT;
@@ -1612,6 +2535,86 @@ function updateGifOverlay(){
   gifOverlay = img;
 }
 
+// ── COLOR CUSTOMIZER ──────────────────────────────────────
+const COLOR_PRESETS = {
+  classic: {blue:'#1a5fad',blueDark:'#0d3d7a',white:'#f5f5f5',whiteDark:'#d0d0d0',ring:'#0a0a0a',chrome:'#777777'},
+  chrome:  {blue:'#cccccc',blueDark:'#999999',white:'#ffffff',whiteDark:'#eeeeee',ring:'#111111',chrome:'#aaaaaa'},
+  msport:  {blue:'#c0392b',blueDark:'#8e1a0e',white:'#f5f5f5',whiteDark:'#d0d0d0',ring:'#111111',chrome:'#888888'},
+  gold:    {blue:'#c9a84c',blueDark:'#8a6914',white:'#fff8e7',whiteDark:'#eeddb0',ring:'#0a0a0a',chrome:'#c9a84c'},
+  purple:  {blue:'#7c3aed',blueDark:'#4c1d95',white:'#f3e8ff',whiteDark:'#ddd6fe',ring:'#0a0005',chrome:'#7c3aed'},
+  stealth: {blue:'#1a1a1a',blueDark:'#0a0a0a',white:'#2a2a2a',whiteDark:'#1a1a1a',ring:'#050505',chrome:'#333333'},
+};
+
+// Load saved colors
+try{
+  const saved=localStorage.getItem('bmwCustomColors');
+  if(saved) glitchColors=JSON.parse(saved);
+}catch(e){}
+
+function openColorModal(){
+  // Sync inputs with current colors
+  Object.keys(glitchColors).forEach(key=>{
+    const inp=document.getElementById(`cc_${key}`);
+    const hex=document.getElementById(`cc_${key}_hex`);
+    if(inp){inp.value=glitchColors[key];}
+    if(hex){hex.value=glitchColors[key];}
+  });
+  document.getElementById('colorModal').style.display='flex';
+  previewColors();
+}
+
+function closeColorModal(){
+  document.getElementById('colorModal').style.display='none';
+}
+
+function hexInputChanged(hexInput, colorInput){
+  const val=hexInput.value.trim();
+  if(/^#[0-9a-fA-F]{6}$/.test(val)){
+    colorInput.value=val;
+    previewColors();
+  }
+}
+
+function previewColors(){
+  // Sync hex inputs from color pickers
+  ['blue','blueDark','white','whiteDark','ring','chrome'].forEach(key=>{
+    const inp=document.getElementById(`cc_${key}`);
+    const hex=document.getElementById(`cc_${key}_hex`);
+    if(inp&&hex) hex.value=inp.value;
+  });
+  // Draw preview
+  const pc=document.getElementById('colorPreviewCanvas');
+  if(!pc)return;
+  const ctx=pc.getContext('2d');
+  const cols={};
+  ['blue','blueDark','white','whiteDark','ring','chrome'].forEach(key=>{
+    cols[key]=document.getElementById(`cc_${key}`).value;
+  });
+  drawBMW(ctx,120,cols.blue,cols.blueDark,cols.white,cols.whiteDark,cols.ring,cols.chrome);
+}
+
+function applyColorPreset(name){
+  const p=COLOR_PRESETS[name];
+  if(!p)return;
+  Object.keys(p).forEach(key=>{
+    const inp=document.getElementById(`cc_${key}`);
+    const hex=document.getElementById(`cc_${key}_hex`);
+    if(inp) inp.value=p[key];
+    if(hex) hex.value=p[key];
+  });
+  previewColors();
+}
+
+function saveColors(){
+  ['blue','blueDark','white','whiteDark','ring','chrome'].forEach(key=>{
+    glitchColors[key]=document.getElementById(`cc_${key}`).value;
+  });
+  try{localStorage.setItem('bmwCustomColors',JSON.stringify(glitchColors));}catch(e){}
+  closeColorModal();
+  // Rebuild affected presets
+  buildGrid(activeTab);
+}
+
 function buildGrid(tab){
   const grid=document.getElementById('grid'); grid.innerHTML='';
   presets.forEach((p,i)=>{
@@ -1625,11 +2628,12 @@ function buildGrid(tab){
       im.src=p.url;
       im.style.cssText='width:68px;height:68px;border-radius:50%;object-fit:cover;display:block;';
       tw.appendChild(im);
+      // Delete button on TOP RIGHT of card itself
       const del=document.createElement('div');
       del.textContent='✕';
-      del.style.cssText='position:absolute;top:-2px;right:-2px;width:18px;height:18px;background:#ff3344;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;z-index:5;font-weight:900;line-height:1;';
-      del.onclick=(e)=>{e.stopPropagation();deleteUserPreset(i);};
-      tw.appendChild(del);
+      del.style.cssText='position:absolute;top:4px;right:4px;width:20px;height:20px;background:#ff3344;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;z-index:20;font-weight:900;line-height:1;box-shadow:0 0 6px rgba(255,50,50,0.7);';
+      del.onclick=(e)=>{e.stopPropagation();showDeleteConfirm(i);};
+      card.appendChild(del);
     } else {
       const tc=document.createElement('canvas');tc.width=TS;tc.height=TS;tw.appendChild(tc);
       try{
@@ -1649,6 +2653,7 @@ function switchTab(i,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   buildGrid(i);
+
 }
 
 function selectPreset(i){
@@ -1656,8 +2661,33 @@ function selectPreset(i){
   const p=presets[i];
   document.getElementById('prevName').textContent=p.name;
   document.getElementById('prevDesc').textContent=p.desc;
+
+
+  // Clean up any existing gif overlay
+  if(gifOverlay){gifOverlay.remove();gifOverlay=null;}
+  // Remove any stray img overlays
+  document.querySelector('.screen-inner').querySelectorAll('img').forEach(el=>el.remove());
+
+  if(p && p.isGif){
+    // Black out canvas
+    const mc=document.getElementById('mainCanvas');
+    const mctx=mc.getContext('2d');
+    mctx.clearRect(0,0,mc.width,mc.height);
+    mctx.fillStyle='#000';
+    mctx.fillRect(0,0,mc.width,mc.height);
+    // Create animated GIF img overlay
+    const inner=document.querySelector('.screen-inner');
+    const img=document.createElement('img');
+    img.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:50%;z-index:6;display:block;';
+    img.onerror=(e)=>console.error('GIF load error');
+    img.onload=()=>console.log('GIF loaded, naturalWidth:',img.naturalWidth);
+    // Set src after append to ensure it loads
+    inner.appendChild(img);
+    img.src = p.url;
+    gifOverlay=img;
+  }
+
   buildGrid(activeTab);
-  updateGifOverlay();
 }
 
 function applyPreset(){if(powered)selectPreset(cur);}
@@ -1785,4 +2815,103 @@ if(isIos && !isInStandalone){
 }
 </script>
 </body>
-</html>
+</html>// ── BMW M LOGO FIXED ─────────────────────────────────────
+function drawMLogoReal(c,s){
+  const cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);
+  c.fillStyle='#000';c.fillRect(0,0,s,s);
+
+  // Outer ring
+  c.beginPath();c.arc(cx,cy,s*.46,0,Math.PI*2);
+  const rg=c.createLinearGradient(cx-s*.46,cy,cx+s*.46,cy);
+  rg.addColorStop(0,'#1a1a1a');rg.addColorStop(.5,'#444');rg.addColorStop(1,'#1a1a1a');
+  c.strokeStyle=rg;c.lineWidth=s*.022;c.stroke();
+
+  // The real BMW M logo layout:
+  // Total width: ~72% of screen
+  // Left portion: 3 italic stripes (~38% of total)
+  // Right portion: Bold M letter (~62% of total)
+  // Height: ~30% of screen, centered vertically
+
+  const totalW = s * 0.72;
+  const totalH = s * 0.30;
+  const startX = cx - totalW/2;
+  const startY = cy - totalH/2 - s*0.01;
+  const slant = totalH * 0.5; // italic slant offset
+
+  const stripeSection = totalW * 0.36;
+  const sw = stripeSection / 3;
+
+  // Stripe 1 - lighter blue #4f8ec9
+  c.beginPath();
+  c.moveTo(startX + slant, startY);
+  c.lineTo(startX + slant + sw, startY);
+  c.lineTo(startX + sw, startY + totalH);
+  c.lineTo(startX, startY + totalH);
+  c.closePath();
+  c.fillStyle = '#4a8ec8';
+  c.fill();
+
+  // Stripe 2 - dark navy #1d3f7a
+  c.beginPath();
+  c.moveTo(startX + slant + sw, startY);
+  c.lineTo(startX + slant + sw*2, startY);
+  c.lineTo(startX + sw*2, startY + totalH);
+  c.lineTo(startX + sw, startY + totalH);
+  c.closePath();
+  c.fillStyle = '#1c3c78';
+  c.fill();
+
+  // Stripe 3 - red #c8171e
+  c.beginPath();
+  c.moveTo(startX + slant + sw*2, startY);
+  c.lineTo(startX + slant + sw*3, startY);
+  c.lineTo(startX + sw*3, startY + totalH);
+  c.lineTo(startX + sw*2, startY + totalH);
+  c.closePath();
+  c.fillStyle = '#c8171e';
+  c.fill();
+
+  // M LETTER
+  // Starts right after stripes with slight overlap
+  const mStartX = startX + sw*2.6;
+  const mEndX = startX + totalW;
+  const mW = mEndX - mStartX;
+  const mH = totalH;
+  const mY = startY;
+  const stemW = mW * 0.21; // stem/leg thickness
+
+  c.fillStyle = '#ffffff';
+  c.shadowColor = 'rgba(255,255,255,0.15)';
+  c.shadowBlur = 6;
+
+  // Left stem (vertical)
+  c.fillRect(mStartX, mY, stemW, mH);
+
+  // Right stem (vertical)
+  c.fillRect(mEndX - stemW, mY, stemW, mH);
+
+  // Left diagonal (top-left to center-bottom of V)
+  // Goes from top-left inner edge to center at ~52% height
+  c.beginPath();
+  c.moveTo(mStartX + stemW, mY);              // top right of left stem
+  c.lineTo(mStartX + stemW + stemW*0.3, mY);  // slight width at top
+  c.lineTo(mStartX + mW/2 + stemW*0.35, mY + mH*0.54); // center bottom right
+  c.lineTo(mStartX + mW/2 - stemW*0.35, mY + mH*0.54); // center bottom left  
+  c.closePath();
+  c.fill();
+
+  // Right diagonal (top-right to center-bottom of V)
+  c.beginPath();
+  c.moveTo(mEndX - stemW, mY);               // top left of right stem
+  c.lineTo(mEndX - stemW - stemW*0.3, mY);   // slight width at top
+  c.lineTo(mStartX + mW/2 - stemW*0.35, mY + mH*0.54); // center bottom left
+  c.lineTo(mStartX + mW/2 + stemW*0.35, mY + mH*0.54); // center bottom right
+  c.closePath();
+  c.fill();
+
+  c.shadowBlur = 0;
+}
+
+// ── NEON M FIXED ──────────────────────────────────────────
+
