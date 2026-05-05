@@ -24,154 +24,1173 @@
 <!-- App icon (inline SVG as data URL for single-file) -->
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23060608' rx='120'/%3E%3Ccircle cx='256' cy='256' r='210' fill='%23111'/%3E%3Ccircle cx='256' cy='256' r='185' fill='none' stroke='%23555' stroke-width='18'/%3E%3Cpath d='M256 256 L256 71 A185 185 0 0 0 71 256 Z' fill='%231a5fad'/%3E%3Cpath d='M256 256 L256 441 A185 185 0 0 0 441 256 Z' fill='%231a5fad'/%3E%3Cpath d='M256 256 L256 71 A185 185 0 0 1 441 256 Z' fill='%23f0f0f0'/%3E%3Cpath d='M256 256 L256 441 A185 185 0 0 1 71 256 Z' fill='%23f0f0f0'/%3E%3Cline x1='256' y1='71' x2='256' y2='441' stroke='%23111' stroke-width='14'/%3E%3Cline x1='71' y1='256' x2='441' y2='256' stroke='%23111' stroke-width='14'/%3E%3C/svg%3E">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap');
+
+/* ── DESIGN TOKENS ─────────────────────────────────────────── */
+:root{
+  --bg:#0a0a0c;
+  --surface:#121216;
+  --surface-2:#17171c;
+  --surface-3:#1d1d23;
+  --hairline:#23232b;
+  --hairline-strong:#2d2d36;
+  --text:#ececef;
+  --text-2:#9a9aa3;
+  --text-3:#5a5a63;
+  --text-4:#3a3a42;
+  --accent:#5fb8ff;
+  --accent-soft:rgba(95,184,255,0.10);
+  --accent-border:rgba(95,184,255,0.28);
+  --accent-strong:rgba(95,184,255,0.55);
+  --good:#3ddc97;
+  --bad:#ff5469;
+  --warn:#ffb547;
+  --gold:#e8c547;
+  --radius-sm:8px;
+  --radius:12px;
+  --radius-lg:16px;
+  --radius-xl:20px;
+  --shadow-card:0 1px 0 rgba(255,255,255,0.02) inset;
+  --shadow-elev:0 8px 24px rgba(0,0,0,0.5);
+  --shadow-deep:0 20px 60px rgba(0,0,0,0.8);
+}
+
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{background:#060608;color:#eee;font-family:'Rajdhani',sans-serif;min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden;}
+html,body{background:var(--bg);}
+body{
+  color:var(--text);
+  font-family:'Inter','SF Pro Text',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  font-size:14px;
+  font-weight:400;
+  line-height:1.4;
+  letter-spacing:-0.005em;
+  min-height:100vh;
+  max-width:430px;
+  margin:0 auto;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
 
-/* TOP BAR */
-.topbar{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #0f0f1a;}
-.topbar-left{display:flex;flex-direction:column;}
-.app-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:5px;color:#4fc3f7;text-shadow:0 0 15px rgba(79,195,247,0.4);}
-.app-sub{font-size:9px;letter-spacing:3px;color:#252535;text-transform:uppercase;margin-top:2px;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
+/* ── TOP BAR ─────────────────────────────────────────────── */
+.topbar{
+  padding:14px 18px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-left{display:flex;flex-direction:column;gap:1px;}
+.app-title{
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+}
+.app-sub{
+  font-size:11px;font-weight:500;
+  color:var(--text-3);
+  letter-spacing:0;
+  text-transform:none;
+}
+.topbar-right{display:flex;align-items:center;gap:8px;}
 
-/* CONNECT STATUS */
-.connect-btn{display:flex;align-items:center;gap:6px;background:#0d0d1a;border:1px solid #1a1a2e;border-radius:20px;padding:6px 12px;cursor:pointer;transition:all 0.2s;}
-.connect-btn.connected{border-color:rgba(0,230,100,0.4);background:rgba(0,230,100,0.06);}
-.connect-dot{width:7px;height:7px;border-radius:50%;background:#333;transition:all 0.3s;}
-.connect-dot.on{background:#00e664;box-shadow:0 0 8px #00e664;}
-.connect-dot.off{background:#ff3344;box-shadow:0 0 8px #ff3344;}
-.connect-label{font-family:'Orbitron',monospace;font-size:7.5px;letter-spacing:2px;color:#444;text-transform:uppercase;transition:color 0.3s;}
-.connect-btn.connected .connect-label{color:#00e664;}
+/* ── CONNECT PILL ────────────────────────────────────────── */
+.connect-btn{
+  display:flex;align-items:center;gap:7px;
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:999px;
+  padding:7px 12px 7px 11px;
+  cursor:pointer;
+  transition:background 0.18s,border-color 0.18s;
+}
+.connect-btn:active{background:var(--surface-2);}
+.connect-btn.connected{
+  border-color:rgba(61,220,151,0.32);
+  background:rgba(61,220,151,0.06);
+}
+.connect-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--text-4);
+  transition:all 0.25s;
+}
+.connect-dot.on{background:var(--good);box-shadow:0 0 6px rgba(61,220,151,0.7);}
+.connect-dot.off{background:var(--bad);box-shadow:0 0 6px rgba(255,84,105,0.6);}
+.connect-label{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  letter-spacing:0;
+  color:var(--text-2);
+  text-transform:none;
+  transition:color 0.25s;
+}
+.connect-btn.connected .connect-label{color:var(--good);}
 
-/* POWER BTN */
-.power-btn{width:34px;height:34px;border-radius:50%;background:#0d0d1a;border:1px solid #1a1a2e;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;}
-.power-btn.on{border-color:rgba(79,195,247,0.4);box-shadow:0 0 12px rgba(79,195,247,0.15);}
+/* ── POWER / ICON BUTTONS ────────────────────────────────── */
+.power-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:background 0.18s,border-color 0.18s;
+}
+.power-btn:active{background:var(--surface-2);}
+.power-btn.on{
+  border-color:var(--accent-border);
+  background:var(--accent-soft);
+}
 .power-icon{width:14px;height:14px;position:relative;}
-.power-icon::before{content:'';position:absolute;top:2px;left:50%;transform:translateX(-50%);width:2px;height:7px;background:#333;border-radius:1px;transition:background 0.3s;}
-.power-btn.on .power-icon::before{background:#4fc3f7;}
-.power-icon::after{content:'';position:absolute;top:3px;left:0;width:14px;height:10px;border:2px solid #333;border-radius:7px 7px 0 0;border-bottom:none;transition:border-color 0.3s;}
-.power-btn.on .power-icon::after{border-color:#4fc3f7;}
+.power-icon::before{content:'';position:absolute;top:2px;left:50%;transform:translateX(-50%);width:2px;height:7px;background:var(--text-3);border-radius:1px;transition:background 0.25s;}
+.power-btn.on .power-icon::before{background:var(--accent);}
+.power-icon::after{content:'';position:absolute;top:3px;left:0;width:14px;height:10px;border:2px solid var(--text-3);border-radius:7px 7px 0 0;border-bottom:none;transition:border-color 0.25s;}
+.power-btn.on .power-icon::after{border-color:var(--accent);}
 
-/* DEVICE LABEL */
-.device-label{font-family:'Orbitron',monospace;font-size:7.5px;letter-spacing:2px;color:#1a3a4a;text-transform:uppercase;text-align:center;padding:4px 0 0;}
+/* ── DEVICE LABEL ────────────────────────────────────────── */
+.device-label{
+  font-family:'Orbitron',monospace;
+  font-size:9px;font-weight:500;
+  letter-spacing:2.5px;
+  color:var(--text-4);
+  text-transform:uppercase;
+  text-align:center;
+  padding:2px 0 0;
+}
 
-/* PREVIEW */
-.preview-wrap{display:flex;flex-direction:column;align-items:center;padding:18px 0 14px;position:relative;}
-.screen-outer{width:min(64vw,256px);height:min(64vw,256px);border-radius:50%;background:conic-gradient(from 135deg,#252535,#0f0f18,#252535,#080810,#252535);box-shadow:0 0 0 2px #151525,0 0 0 5px #060608,0 18px 60px rgba(0,0,0,0.98);display:flex;align-items:center;justify-content:center;position:relative;transition:box-shadow 0.4s;}
-.screen-outer.powered-off{box-shadow:0 0 0 2px #111,0 0 0 5px #060608,0 8px 30px rgba(0,0,0,0.9);}
-.screen-inner{width:calc(min(64vw,256px) - 22px);height:calc(min(64vw,256px) - 22px);border-radius:50%;background:#000;overflow:hidden;position:relative;}
+/* ── PREVIEW HERO ────────────────────────────────────────── */
+.preview-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  padding:14px 0 18px;
+  position:relative;
+}
+.screen-outer{
+  width:min(66vw,272px);height:min(66vw,272px);
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 25%,#202028 0%,#101014 55%,#08080a 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 0 0 1px rgba(255,255,255,0.02),
+    0 0 0 1px #1a1a20,
+    0 24px 50px rgba(0,0,0,0.7),
+    0 4px 12px rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  transition:box-shadow 0.4s,opacity 0.4s;
+}
+.screen-outer.powered-off{
+  opacity:0.85;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.03),
+    0 0 0 1px #15151a,
+    0 12px 32px rgba(0,0,0,0.6);
+}
+.screen-inner{
+  width:calc(min(66vw,272px) - 18px);
+  height:calc(min(66vw,272px) - 18px);
+  border-radius:50%;
+  background:#000;
+  overflow:hidden;
+  position:relative;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.6),inset 0 2px 8px rgba(0,0,0,0.8);
+}
 .screen-off-overlay{position:absolute;inset:0;border-radius:50%;background:#000;z-index:5;opacity:0;pointer-events:none;transition:opacity 0.5s;}
 .screen-off-overlay.active{opacity:1;}
-.screen-shine{position:absolute;top:7px;left:14px;width:52px;height:30px;background:radial-gradient(ellipse,rgba(255,255,255,0.05) 0%,transparent 70%);border-radius:50%;transform:rotate(-25deg);pointer-events:none;z-index:10;}
-#mainCanvas{width:calc(min(64vw,256px) - 22px);height:calc(min(64vw,256px) - 22px);border-radius:50%;}
-.preview-name{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:4px;color:#4fc3f7;margin-top:14px;text-transform:uppercase;}
-.preview-desc{font-size:11px;color:#2a2a3a;letter-spacing:1px;margin-top:3px;}
+.screen-shine{
+  position:absolute;
+  top:6%;left:14%;
+  width:42%;height:18%;
+  background:radial-gradient(ellipse,rgba(255,255,255,0.04) 0%,transparent 70%);
+  border-radius:50%;
+  transform:rotate(-22deg);
+  pointer-events:none;
+  z-index:10;
+}
+#mainCanvas{
+  width:calc(min(66vw,272px) - 18px);
+  height:calc(min(66vw,272px) - 18px);
+  border-radius:50%;
+  display:block;
+}
+.preview-name{
+  font-family:'Inter',sans-serif;
+  font-size:15px;font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+  margin-top:18px;
+  text-transform:none;
+}
+.preview-desc{
+  font-size:12px;font-weight:400;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-top:3px;
+}
 
-/* TABS */
-.tabs{display:flex;border-bottom:1px solid #0d0d18;margin:0 12px 12px;}
-.tab{flex:1;text-align:center;padding:9px 0;font-family:'Orbitron',monospace;font-size:7.5px;letter-spacing:2px;color:#2a2a3a;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;text-transform:uppercase;}
-.tab.active{color:#4fc3f7;border-bottom-color:#4fc3f7;}
+/* ── TAB SEGMENTED CONTROL ───────────────────────────────── */
+.tabs{
+  display:flex;
+  margin:6px 14px 14px;
+  padding:3px;
+  gap:2px;
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:11px;
+}
+.tab{
+  flex:1;text-align:center;
+  padding:8px 0;
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:500;
+  letter-spacing:0;
+  color:var(--text-2);
+  text-transform:none;
+  cursor:pointer;
+  border-radius:8px;
+  transition:background 0.18s,color 0.18s;
+}
+.tab.active{
+  background:var(--surface-3);
+  color:var(--text);
+  box-shadow:0 1px 0 rgba(255,255,255,0.03) inset;
+}
 
-/* GRID */
-.grid-wrap{padding:0 12px 100px;}
+/* ── PRESET GRID ─────────────────────────────────────────── */
+.grid-wrap{padding:0 12px 110px;}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.preset-card{background:#080810;border:1px solid #10101e;border-radius:12px;padding:10px 6px 9px;cursor:pointer;text-align:center;transition:all 0.15s;position:relative;overflow:hidden;}
-.preset-card:active{transform:scale(0.95);}
-.preset-card.active{border-color:rgba(79,195,247,0.45);background:rgba(79,195,247,0.04);}
-.preset-card.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#4fc3f7,transparent);}
-.thumb-wrap{width:68px;height:68px;border-radius:50%;margin:0 auto 7px;overflow:hidden;background:#000;border:1px solid #181828;}
-.thumb-wrap canvas{width:68px;height:68px;border-radius:50%;}
-.card-name{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:#4fc3f7;text-transform:uppercase;line-height:1.4;}
-.preset-card.active .card-name{color:#4fc3f7;}
+.preset-card{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:14px;
+  padding:12px 6px 10px;
+  cursor:pointer;text-align:center;
+  transition:transform 0.12s,background 0.18s,border-color 0.18s;
+  position:relative;
+  overflow:hidden;
+}
+.preset-card:active{transform:scale(0.96);}
+.preset-card.active{
+  border-color:var(--accent-border);
+  background:var(--accent-soft);
+}
+.thumb-wrap{
+  width:68px;height:68px;
+  border-radius:50%;
+  margin:0 auto 8px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04),inset 0 2px 4px rgba(0,0,0,0.6);
+}
+.thumb-wrap canvas{width:68px;height:68px;border-radius:50%;display:block;}
+.card-name{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  letter-spacing:0;
+  color:var(--text-2);
+  text-transform:none;
+  line-height:1.3;
+}
+.preset-card.active .card-name{color:var(--text);}
 
-/* BOTTOM */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(6,6,8,0.98);border-top:1px solid #0d0d18;padding:11px 20px 22px;backdrop-filter:blur(10px);}
-.send-btn{background:rgba(79,195,247,0.07);border:1px solid rgba(79,195,247,0.25);border-radius:10px;color:#4fc3f7;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:4px;padding:13px;cursor:pointer;width:100%;text-transform:uppercase;transition:all 0.2s;}
-.send-btn:active{opacity:0.6;}
-
-/* INSTALL BANNERS */
-.install-banner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(10,10,20,0.97);border-bottom:1px solid rgba(79,195,247,0.2);padding:12px 16px;display:none;align-items:center;justify-content:space-between;z-index:300;gap:10px;backdrop-filter:blur(10px);}
-.install-text{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:#4fc3f7;flex:1;}
-.install-text span{display:block;font-family:'Rajdhani',sans-serif;font-size:11px;color:#666;letter-spacing:1px;margin-top:2px;}
-.install-action{background:rgba(79,195,247,0.12);border:1px solid rgba(79,195,247,0.35);border-radius:8px;color:#4fc3f7;font-family:'Orbitron',monospace;font-size:7.5px;letter-spacing:2px;padding:8px 12px;cursor:pointer;white-space:nowrap;}
-.install-dismiss{background:none;border:none;color:#333;font-size:18px;cursor:pointer;padding:4px;line-height:1;}
-.ios-banner{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:90%;max-width:380px;background:rgba(10,10,20,0.97);border:1px solid rgba(79,195,247,0.2);border-radius:14px;padding:16px;display:none;flex-direction:column;align-items:center;z-index:300;gap:8px;backdrop-filter:blur(10px);}
-.ios-banner-title{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:#4fc3f7;}
-.ios-banner-steps{font-size:12px;color:#666;letter-spacing:1px;text-align:center;line-height:1.8;}
-.ios-banner-steps b{color:#aaa;}
-.ios-banner-close{font-family:'Orbitron',monospace;font-size:7.5px;letter-spacing:2px;color:#333;background:none;border:1px solid #1a1a2e;border-radius:6px;padding:6px 14px;cursor:pointer;margin-top:4px;}
-
-/* EDITOR MODAL */
-.editor-modal{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
-.editor-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:4px;color:#4fc3f7;margin-bottom:16px;text-transform:uppercase;}
-.editor-canvas-wrap{position:relative;width:280px;height:280px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px #1a1a2e,0 0 30px rgba(0,0,0,0.8);margin-bottom:18px;touch-action:none;}
-#editorCanvas{width:280px;height:280px;border-radius:50%;cursor:grab;display:block;}
-#editorCanvas:active{cursor:grabbing;}
-.editor-hint{font-size:11px;color:#333;letter-spacing:2px;margin-bottom:16px;}
-.editor-controls{display:flex;gap:10px;margin-bottom:16px;width:100%;max-width:300px;}
-.ed-btn{flex:1;padding:11px 8px;border-radius:9px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:all 0.2s;border:1px solid #1a1a2e;background:#0d0d1a;color:#666;}
-.ed-btn:active{opacity:0.6;transform:scale(0.97);}
-.ed-btn.zoom{color:#4fc3f7;border-color:rgba(79,195,247,0.3);}
-.ed-btn.center{color:#aaa;border-color:#2a2a3a;}
-.editor-actions{display:flex;gap:10px;width:100%;max-width:300px;}
-.ed-save{flex:1;padding:13px;border-radius:10px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;cursor:pointer;background:rgba(79,195,247,0.1);border:1px solid rgba(79,195,247,0.35);color:#4fc3f7;text-transform:uppercase;}
-.ed-cancel{flex:0 0 auto;padding:13px 16px;border-radius:10px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;background:transparent;border:1px solid #1a1a2e;color:#444;text-transform:uppercase;}
-
-/* CONNECT MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
-.modal-overlay.active{opacity:1;pointer-events:all;}
-.modal{background:#0d0d18;border:1px solid #1a1a2e;border-radius:16px;padding:24px 20px;width:88%;max-width:340px;}
-.modal-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:4px;color:#4fc3f7;margin-bottom:6px;}
-.modal-sub{font-size:11px;color:#333;letter-spacing:1px;margin-bottom:20px;}
-.wifi-input{width:100%;background:#060608;border:1px solid #1a1a2e;border-radius:8px;padding:12px 14px;color:#eee;font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;margin-bottom:10px;}
-.wifi-input:focus{border-color:rgba(79,195,247,0.4);}
-.modal-btn{width:100%;padding:12px;border-radius:8px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;cursor:pointer;margin-bottom:8px;transition:all 0.2s;}
-.modal-btn.primary{background:rgba(79,195,247,0.12);border:1px solid rgba(79,195,247,0.35);color:#4fc3f7;}
-.modal-btn.secondary{background:transparent;border:1px solid #1a1a2e;color:#444;}
-.modal-btn:active{opacity:0.7;}
-
-/* ── MOBILE POLISH ─────────────────────────────── */
-body{-webkit-tap-highlight-color:transparent;}
-
-/* Screen centered and properly sized */
-.screen-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 0 6px;}
-
-/* Preview text clean and centered */
-.preview-info{text-align:center;padding:6px 24px 4px;}
-#prevName{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3.5px;color:#4fc3f7;text-transform:uppercase;margin-bottom:3px;display:block;}
-#prevDesc{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:#2a4a5a;text-transform:uppercase;display:block;}
-
-/* Tabs evenly spaced */
-.tabs{display:flex;border-bottom:1px solid #0d0d18;margin:8px 14px 10px;padding:0;}
-.tab{flex:1;text-align:center;padding:8px 0;font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:#2a4a5a;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
-.tab.active{color:#4fc3f7;border-bottom:2px solid #4fc3f7;}
-
-/* Grid clean */
-.grid-wrap{padding:0 10px 90px;}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-
-/* Cards clean and consistent */
-.preset-card{background:#08080f;border:1px solid #10101e;border-radius:14px;padding:10px 6px 8px;cursor:pointer;text-align:center;transition:all 0.15s;position:relative;}
-.preset-card.active{border-color:rgba(79,195,247,0.5);background:#0d0d1a;box-shadow:0 0 12px rgba(79,195,247,0.08);}
-.preset-card:active{opacity:0.75;transform:scale(0.96);}
-
-/* Thumbnails consistent */
-.thumb-wrap{width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 7px;background:#000;position:relative;}
-
-/* Card labels */
-.card-name{font-family:'Orbitron',monospace;font-size:6.5px;letter-spacing:1.5px;color:#4fc3f7;text-transform:uppercase;line-height:1.4;margin-top:2px;}
-
-/* Bottom nav clean */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(6,6,8,0.97);border-top:1px solid #0d0d1a;padding:10px 14px max(18px,env(safe-area-inset-bottom));backdrop-filter:blur(12px);}
+/* ── BOTTOM NAV ──────────────────────────────────────────── */
+.bottom-nav{
+  position:fixed;
+  bottom:0;left:50%;
+  transform:translateX(-50%);
+  width:100%;max-width:430px;
+  background:rgba(10,10,12,0.85);
+  border-top:1px solid var(--hairline);
+  padding:12px 16px max(20px,env(safe-area-inset-bottom));
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+}
 .bottom-nav > div{display:flex;gap:8px;width:100%;align-items:center;}
 
-/* Buttons clean */
-.send-btn{background:rgba(79,195,247,0.07);border:1px solid rgba(79,195,247,0.22);border-radius:10px;color:#4fc3f7;font-family:'Orbitron',monospace;font-size:7.5px;letter-spacing:2.5px;padding:12px;cursor:pointer;text-transform:uppercase;transition:all 0.15s;-webkit-appearance:none;}
-.send-btn:active{opacity:0.7;transform:scale(0.97);}
+/* ── BUTTON SYSTEM ───────────────────────────────────────── */
+.send-btn{
+  background:var(--accent);
+  border:1px solid var(--accent);
+  border-radius:11px;
+  color:#04111c;
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;
+  letter-spacing:-0.005em;
+  padding:13px 16px;
+  cursor:pointer;
+  text-transform:none;
+  transition:transform 0.12s,opacity 0.18s,background 0.18s;
+  -webkit-appearance:none;
+}
+.send-btn:active{transform:scale(0.98);opacity:0.9;}
+.send-btn.secondary{
+  background:var(--surface-2);
+  border:1px solid var(--hairline-strong);
+  color:var(--text);
+}
+.send-btn.ghost{
+  background:transparent;
+  border:1px solid var(--hairline-strong);
+  color:var(--text-2);
+}
+.send-btn.icon-only{
+  padding:13px 14px;
+  background:var(--surface-2);
+  border:1px solid var(--hairline-strong);
+  color:var(--text);
+  font-size:16px;
+}
 
-/* Topbar */
-.topbar{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;}
+/* ── INSTALL BANNERS ─────────────────────────────────────── */
+.install-banner{
+  position:fixed;top:0;left:50%;
+  transform:translateX(-50%);
+  width:100%;max-width:430px;
+  background:rgba(18,18,22,0.92);
+  border-bottom:1px solid var(--hairline);
+  padding:12px 16px;
+  display:none;align-items:center;justify-content:space-between;
+  z-index:300;gap:10px;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+.install-text{
+  font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:600;
+  letter-spacing:-0.005em;
+  color:var(--text);
+  flex:1;
+}
+.install-text span{
+  display:block;
+  font-weight:400;
+  font-size:12px;
+  color:var(--text-2);
+  letter-spacing:0;
+  margin-top:2px;
+}
+.install-action{
+  background:var(--accent);
+  border:none;
+  border-radius:8px;
+  color:#04111c;
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:600;
+  letter-spacing:0;
+  padding:8px 14px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.install-dismiss{
+  background:none;border:none;
+  color:var(--text-3);
+  font-size:20px;cursor:pointer;
+  padding:4px;line-height:1;
+}
+.ios-banner{
+  position:fixed;
+  bottom:90px;left:50%;
+  transform:translateX(-50%);
+  width:90%;max-width:360px;
+  background:rgba(18,18,22,0.95);
+  border:1px solid var(--hairline);
+  border-radius:16px;
+  padding:18px;
+  display:none;flex-direction:column;align-items:center;
+  z-index:300;gap:8px;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+.ios-banner-title{
+  font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:600;
+  letter-spacing:-0.005em;
+  color:var(--text);
+}
+
+/* ── EDITOR MODAL ────────────────────────────────────────── */
+.editor-modal{
+  position:fixed;inset:0;
+  background:rgba(8,8,10,0.96);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:200;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;
+}
+.editor-title{
+  font-family:'Inter',sans-serif;
+  font-size:15px;font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+  margin-bottom:18px;
+  text-transform:none;
+}
+.editor-canvas-wrap{
+  position:relative;
+  width:280px;height:280px;
+  border-radius:50%;
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px var(--hairline),
+    0 0 0 6px var(--bg),
+    0 0 0 7px var(--hairline),
+    0 24px 60px rgba(0,0,0,0.7);
+  margin-bottom:20px;
+  touch-action:none;
+}
+#editorCanvas{width:280px;height:280px;border-radius:50%;cursor:grab;display:block;}
+#editorCanvas:active{cursor:grabbing;}
+.editor-hint{
+  font-size:12px;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-bottom:18px;
+}
+.editor-controls{display:flex;gap:8px;margin-bottom:14px;width:100%;max-width:300px;}
+.ed-btn{
+  flex:1;padding:11px 8px;
+  border-radius:9px;
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:500;
+  letter-spacing:0;
+  cursor:pointer;
+  text-transform:none;
+  transition:opacity 0.18s,transform 0.12s;
+  border:1px solid var(--hairline-strong);
+  background:var(--surface-2);
+  color:var(--text-2);
+}
+.ed-btn:active{opacity:0.7;transform:scale(0.97);}
+.ed-btn.zoom{color:var(--accent);border-color:var(--accent-border);}
+.ed-btn.center{color:var(--text);}
+.editor-actions{display:flex;gap:8px;width:100%;max-width:300px;}
+.ed-save{
+  flex:1;padding:13px;
+  border-radius:11px;
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;
+  letter-spacing:-0.005em;
+  cursor:pointer;
+  background:var(--accent);
+  border:1px solid var(--accent);
+  color:#04111c;
+  text-transform:none;
+}
+.ed-cancel{
+  flex:0 0 auto;padding:13px 18px;
+  border-radius:11px;
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:500;
+  letter-spacing:0;
+  cursor:pointer;
+  background:transparent;
+  border:1px solid var(--hairline-strong);
+  color:var(--text-2);
+  text-transform:none;
+}
+
+/* ── MODAL OVERLAY ───────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s;
+}
+.modal-overlay.active{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:18px;
+  padding:24px 22px;
+  width:88%;max-width:340px;
+  box-shadow:var(--shadow-deep);
+}
+.modal-title{
+  font-family:'Inter',sans-serif;
+  font-size:16px;font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+  margin-bottom:4px;
+  text-transform:none;
+}
+.modal-sub{
+  font-size:13px;
+  color:var(--text-2);
+  letter-spacing:0;
+  margin-bottom:18px;
+}
+.wifi-input{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--hairline);
+  border-radius:10px;
+  padding:13px 14px;
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  outline:none;
+  margin-bottom:10px;
+  transition:border-color 0.18s;
+}
+.wifi-input:focus{border-color:var(--accent-border);}
+.wifi-input::placeholder{color:var(--text-3);}
+.modal-btn{
+  width:100%;padding:13px;
+  border-radius:11px;
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;
+  letter-spacing:-0.005em;
+  cursor:pointer;
+  margin-bottom:8px;
+  transition:opacity 0.18s,transform 0.12s;
+  text-transform:none;
+}
+.modal-btn:active{transform:scale(0.98);opacity:0.9;}
+.modal-btn.primary{
+  background:var(--accent);
+  border:1px solid var(--accent);
+  color:#04111c;
+}
+.modal-btn.secondary{
+  background:transparent;
+  border:1px solid var(--hairline-strong);
+  color:var(--text-2);
+}
+
+/* ── SCREEN WRAP HELPER ──────────────────────────────────── */
+.screen-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 0 6px;}
+.preview-info{text-align:center;padding:6px 24px 4px;}
+
+/* ── GAME CARD STYLES (used by games modal) ──────────────── */
+.game-card{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:16px;
+  padding:22px 18px;
+  text-align:center;cursor:pointer;
+  transition:transform 0.12s,border-color 0.18s,background 0.18s;
+}
+.game-card:active{transform:scale(0.97);}
+.game-card .game-emoji{font-size:36px;margin-bottom:12px;display:block;}
+.game-card .game-name{
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;
+  letter-spacing:-0.005em;
+  color:var(--text);
+}
+.game-card .game-desc{
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:400;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-top:4px;
+}
+.game-card.gold{border-color:rgba(232,197,71,0.25);}
+.game-card.gold .game-name{color:var(--gold);}
+
+/* ── GAME PANELS ─────────────────────────────────────────── */
+.game-panel{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:10px;
+}
+.game-panel-label{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-bottom:10px;
+  text-transform:uppercase;
+}
+
+/* ── NAV HEADER (in-game back) ───────────────────────────── */
+.game-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:18px;padding-top:10px;
+}
+.game-back{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:50%;
+  width:38px;height:38px;
+  color:var(--text);
+  font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.18s;
+}
+.game-back:active{background:var(--surface-2);}
+.game-title{
+  font-family:'Inter',sans-serif;
+  font-size:17px;font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+}
+.game-bal{
+  margin-left:auto;
+  font-family:'Orbitron',monospace;
+  font-size:12px;font-weight:500;
+  color:var(--text-2);
+  letter-spacing:0.5px;
+}
+
+/* ── BAL CHIP ────────────────────────────────────────────── */
+.bal-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:999px;
+  font-family:'Orbitron',monospace;
+  font-size:11px;font-weight:500;
+  color:var(--text-2);
+  letter-spacing:0.5px;
+}
+.bal-chip strong{color:var(--text);font-weight:700;}
+
+/* ── GAMES MODAL CHROME ──────────────────────────────────── */
+.games-modal{
+  display:none;position:fixed;inset:0;
+  background:var(--bg);
+  z-index:400;
+  flex-direction:column;align-items:center;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.games-screen{width:100%;max-width:430px;padding:18px 18px 32px;}
+.games-modal-title{
+  font-family:'Inter',sans-serif;
+  font-size:18px;font-weight:700;
+  letter-spacing:-0.015em;
+  color:var(--text);
+}
+.modal-close{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:50%;
+  width:36px;height:36px;
+  color:var(--text);
+  font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.18s;
+}
+.modal-close:active{background:var(--surface-2);}
+
+/* In-game header */
+.game-header{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:18px;
+}
+.game-back{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:50%;
+  width:36px;height:36px;
+  color:var(--text);
+  font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.18s;
+}
+.game-back:active{background:var(--surface-2);}
+.game-title{
+  font-family:'Inter',sans-serif;
+  font-size:17px;font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+}
+.game-bal{
+  margin-left:auto;
+  display:inline-flex;align-items:center;
+  padding:6px 12px;
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:999px;
+  font-family:'Orbitron',monospace;
+  font-size:12px;font-weight:600;
+  color:var(--text);
+  letter-spacing:0.5px;
+}
+
+/* Game card on home */
+.game-card{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:18px;
+  padding:24px 18px;
+  text-align:left;cursor:pointer;
+  transition:transform 0.12s,background 0.18s;
+  position:relative;
+}
+.game-card:active{transform:scale(0.97);}
+.game-card .game-emoji{font-size:34px;margin-bottom:14px;display:block;line-height:1;}
+.game-card .game-name{
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;
+  letter-spacing:-0.005em;
+  color:var(--text);
+}
+.game-card .game-desc{
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:400;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-top:3px;
+}
+.game-card.featured{
+  background:linear-gradient(135deg,rgba(232,197,71,0.06),rgba(95,184,255,0.04) 100%);
+  border-color:rgba(232,197,71,0.24);
+}
+.game-card.featured .game-name{color:var(--gold);}
+
+/* Game panel (cards / hand zones) */
+.gpanel{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:10px;
+}
+.gpanel-label{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  letter-spacing:0;
+  color:var(--text-3);
+  margin-bottom:10px;
+  text-transform:uppercase;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.gpanel-score{
+  font-family:'Orbitron',monospace;
+  font-size:13px;font-weight:600;
+  color:var(--text);
+  letter-spacing:0.5px;
+}
+
+/* Result line (W/L/etc.) */
+.result-line{
+  text-align:center;
+  font-family:'Inter',sans-serif;
+  font-size:15px;font-weight:600;
+  letter-spacing:-0.005em;
+  color:var(--text);
+  min-height:24px;margin:6px 0 10px;
+}
+
+/* Bet row */
+.bet-row{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:12px;
+  padding:10px 12px;
+  margin-bottom:10px;
+}
+.bet-row-label{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  letter-spacing:0;
+  color:var(--text-3);
+  margin-bottom:8px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.bet-row-amount{
+  font-family:'Orbitron',monospace;
+  font-size:14px;font-weight:600;
+  color:var(--text);
+  letter-spacing:0.5px;
+}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;}
+.chip-btn{
+  flex:1;min-width:54px;
+  padding:9px 6px;
+  border-radius:9px;
+  font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:600;
+  letter-spacing:-0.005em;
+  cursor:pointer;
+  background:var(--surface-2);
+  border:1px solid var(--hairline-strong);
+  color:var(--text);
+  transition:transform 0.12s,opacity 0.18s;
+  -webkit-appearance:none;
+}
+.chip-btn:active{transform:scale(0.96);opacity:0.85;}
+.chip-btn.warn{color:var(--bad);}
+
+/* Pay table */
+.paytable{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:12px;
+  padding:12px 14px;
+}
+.paytable-title{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  letter-spacing:0;
+  color:var(--text-3);
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+.paytable-grid{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:5px 12px;
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+}
+.paytable-grid .pay-name{color:var(--text-2);font-weight:400;}
+.paytable-grid .pay-mult{font-family:'Orbitron',monospace;font-weight:600;letter-spacing:0.5px;}
+.pay-mult.gold{color:var(--gold);}
+.pay-mult.cyan{color:var(--accent);}
+
+/* Slot reels */
+.reels-row{
+  display:flex;gap:6px;
+  margin-bottom:14px;
+  justify-content:center;
+}
+.reels-row canvas{
+  border-radius:12px;
+  background:#08080c;
+  border:1px solid var(--hairline);
+}
+
+/* Slot bet stepper */
+.bet-stepper{
+  display:flex;gap:8px;margin-bottom:12px;align-items:center;
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:12px;
+  padding:8px 10px;
+}
+.bet-stepper-label{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  color:var(--text-3);
+  letter-spacing:0;
+}
+.bet-stepper-btn{
+  width:38px;height:38px;
+  border-radius:9px;
+  background:var(--surface-2);
+  border:1px solid var(--hairline-strong);
+  color:var(--text);
+  font-size:18px;font-weight:600;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 0.12s,opacity 0.18s;
+}
+.bet-stepper-btn:active{transform:scale(0.94);opacity:0.85;}
+.bet-stepper-amt{
+  font-family:'Orbitron',monospace;
+  font-size:18px;font-weight:700;
+  color:var(--gold);
+  flex:1;text-align:center;
+  letter-spacing:0.5px;
+}
+.bet-stepper-max{
+  padding:8px 12px;
+  border-radius:9px;
+  background:rgba(232,197,71,0.10);
+  border:1px solid rgba(232,197,71,0.30);
+  color:var(--gold);
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:600;
+  letter-spacing:0.3px;
+  cursor:pointer;
+  transition:transform 0.12s,opacity 0.18s;
+}
+.bet-stepper-max:active{transform:scale(0.96);opacity:0.85;}
+
+/* Spin button */
+.spin-btn{
+  width:100%;padding:18px;
+  border-radius:13px;
+  background:linear-gradient(180deg,rgba(232,197,71,0.16),rgba(232,197,71,0.08));
+  border:1px solid rgba(232,197,71,0.40);
+  color:var(--gold);
+  font-family:'Inter',sans-serif;
+  font-size:15px;font-weight:700;
+  letter-spacing:0;
+  cursor:pointer;
+  margin-bottom:12px;
+  transition:transform 0.12s,opacity 0.18s;
+  -webkit-appearance:none;
+}
+.spin-btn:active{transform:scale(0.99);opacity:0.92;}
+.spin-btn.disabled{
+  background:var(--surface-2);
+  border-color:var(--hairline-strong);
+  color:var(--text-3);
+  opacity:0.7;
+  cursor:default;
+}
+
+/* Bonus pick */
+.bonus-pick{
+  background:var(--surface);
+  border:1px solid rgba(232,197,71,0.30);
+  border-radius:13px;
+  padding:14px;
+  margin-bottom:12px;
+}
+.bonus-pick-title{
+  font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:600;
+  color:var(--gold);
+  text-align:center;
+  margin-bottom:10px;
+  letter-spacing:0;
+}
+.bonus-pick-row{display:flex;gap:8px;}
+.bonus-car-btn{
+  flex:1;padding:14px 6px;
+  border-radius:11px;
+  background:var(--surface-2);
+  border:1px solid rgba(232,197,71,0.32);
+  color:var(--gold);
+  font-family:'Orbitron',monospace;
+  font-size:14px;font-weight:700;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:transform 0.12s,background 0.18s;
+}
+.bonus-car-btn:active{transform:scale(0.96);background:rgba(232,197,71,0.10);}
+
+/* Dev / settings buttons in slot header */
+.dev-pill{
+  background:rgba(255,84,105,0.10);
+  border:1px solid rgba(255,84,105,0.30);
+  border-radius:7px;
+  color:var(--bad);
+  font-family:'Inter',sans-serif;
+  font-size:10px;font-weight:600;
+  padding:5px 9px;
+  cursor:pointer;
+  letter-spacing:0.5px;
+}
+.gear-btn{
+  background:transparent;border:none;
+  color:var(--text-4);
+  font-size:14px;cursor:pointer;
+  padding:4px 6px;
+}
+
+/* Centered modal-card layout for password / dev / delete */
+.center-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:500;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;
+}
+.center-modal-card{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:18px;
+  padding:26px 22px;
+  width:100%;max-width:320px;
+  text-align:center;
+  box-shadow:var(--shadow-deep);
+}
+.center-modal-card.danger{border-color:rgba(255,84,105,0.32);}
+.cm-title{
+  font-family:'Inter',sans-serif;
+  font-size:16px;font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+  margin-bottom:4px;
+  text-transform:none;
+}
+.cm-title.danger{color:var(--bad);}
+.cm-sub{
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:400;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-bottom:18px;
+}
+.cm-input{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--hairline);
+  border-radius:10px;
+  padding:14px;
+  color:var(--text);
+  font-family:'Orbitron',monospace;
+  font-size:18px;font-weight:600;
+  text-align:center;
+  letter-spacing:6px;
+  outline:none;
+  margin-bottom:12px;
+  transition:border-color 0.18s;
+}
+.cm-input:focus{border-color:var(--accent-border);}
+.cm-input::placeholder{color:var(--text-4);letter-spacing:6px;}
+.cm-error{
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:500;
+  color:var(--bad);
+  min-height:16px;margin-bottom:10px;
+}
+.cm-actions{display:flex;gap:8px;}
+.cm-btn{
+  flex:1;padding:13px;
+  border-radius:11px;
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;
+  letter-spacing:-0.005em;
+  cursor:pointer;
+  text-transform:none;
+  transition:transform 0.12s,opacity 0.18s;
+}
+.cm-btn:active{transform:scale(0.98);opacity:0.9;}
+.cm-btn.primary{
+  background:var(--accent);
+  border:1px solid var(--accent);
+  color:#04111c;
+}
+.cm-btn.danger{
+  background:rgba(255,84,105,0.12);
+  border:1px solid rgba(255,84,105,0.35);
+  color:var(--bad);
+}
+.cm-btn.gold{
+  background:rgba(232,197,71,0.12);
+  border:1px solid rgba(232,197,71,0.35);
+  color:var(--gold);
+}
+.cm-btn.cancel{
+  background:transparent;
+  border:1px solid var(--hairline-strong);
+  color:var(--text-2);
+}
+.cm-btn.flex-grow{flex:1;}
+.cm-btn.flex-fixed{flex:0 0 auto;padding:13px 18px;}
+
+/* ── COLOR EDITOR ────────────────────────────────────────── */
+.color-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:300;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;
+}
+.color-modal-card{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  border-radius:18px;
+  padding:22px 20px;
+  width:100%;max-width:360px;
+  box-shadow:var(--shadow-deep);
+}
+.color-modal-title{
+  font-family:'Inter',sans-serif;
+  font-size:16px;font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+  margin-bottom:3px;
+  text-transform:none;
+}
+.color-modal-sub{
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:400;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-bottom:18px;
+}
+#colorPreviewCanvas{
+  border-radius:50%;
+  display:block;
+  margin:0 auto 18px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04),0 8px 24px rgba(0,0,0,0.4);
+}
+.color-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:18px;
+}
+.color-cell-label{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-bottom:6px;
+  text-transform:none;
+}
+.color-cell-row{display:flex;gap:6px;align-items:center;}
+.color-swatch{
+  -webkit-appearance:none;
+  appearance:none;
+  width:34px;height:30px;
+  border:1px solid var(--hairline-strong);
+  border-radius:7px;
+  background:none;
+  padding:2px;cursor:pointer;
+}
+.color-swatch::-webkit-color-swatch-wrapper{padding:0;}
+.color-swatch::-webkit-color-swatch{border:none;border-radius:5px;}
+.hex-input{
+  flex:1;
+  background:var(--bg);
+  border:1px solid var(--hairline);
+  border-radius:7px;
+  padding:7px 9px;
+  color:var(--text);
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.18s;
+}
+.hex-input:focus{border-color:var(--accent-border);}
+.preset-row-label{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:500;
+  color:var(--text-3);
+  letter-spacing:0;
+  margin-bottom:8px;
+  text-transform:none;
+}
+.preset-pill{
+  padding:7px 12px;
+  border-radius:8px;
+  background:var(--surface-2);
+  border:1px solid var(--hairline-strong);
+  color:var(--text-2);
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:500;
+  letter-spacing:0;
+  cursor:pointer;
+  transition:background 0.18s,color 0.18s;
+}
+.preset-pill:active{background:var(--surface-3);color:var(--text);}
+/* ── IOS BANNER DETAILS ──────────────────────────────────── */
+.ios-banner-steps{
+  font-size:13px;font-weight:400;
+  color:var(--text-2);
+  letter-spacing:0;
+  text-align:center;line-height:1.7;
+}
+.ios-banner-steps b{color:var(--text);font-weight:600;}
+.ios-banner-close{
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:500;
+  letter-spacing:0;
+  color:var(--text-2);
+  background:transparent;
+  border:1px solid var(--hairline-strong);
+  border-radius:8px;
+  padding:7px 16px;cursor:pointer;
+  margin-top:6px;
+  text-transform:none;
+}
 </style>
 </head>
 <body>
@@ -204,7 +1223,7 @@ body{-webkit-tap-highlight-color:transparent;}
       <div class="connect-dot off" id="connectDot"></div>
       <div class="connect-label" id="connectLabel">Connect</div>
     </div>
-    <div class="power-btn" onclick="openGamesModal()" style="font-size:18px;display:flex;align-items:center;justify-content:center;">🎮</div>
+    <div class="power-btn" onclick="openGamesModal()" style="font-size:15px;">🎮</div>
     <div class="power-btn" id="powerBtn" onclick="togglePower()">
       <div class="power-icon"></div>
     </div>
@@ -234,98 +1253,105 @@ body{-webkit-tap-highlight-color:transparent;}
 
 <div class="grid-wrap"><div class="grid" id="grid"></div></div>
 <input type="file" id="fileInput" accept="image/*,.gif" style="display:none" multiple>
-<div class="bottom-nav"><div style="display:flex;gap:10px;width:100%;align-items:center;"><button class="send-btn" id="applyBtn" onclick="applyPreset()" style="flex:1;">Apply Preset</button><button class="send-btn" id="paintBtn" onclick="openColorModal()" style="flex:0 0 auto;padding:13px 14px;letter-spacing:1px;display:none;" title="Color Editor">🎨</button><button class="send-btn" onclick="document.getElementById('fileInput').click()" style="flex:0 0 auto;padding:13px 16px;letter-spacing:2px;">+ Upload</button></div></div>
+<div class="bottom-nav"><div><button class="send-btn" id="applyBtn" onclick="applyPreset()" style="flex:1;">Apply Preset</button><button class="send-btn icon-only" id="paintBtn" onclick="openColorModal()" style="display:none;" title="Color Editor">🎨</button><button class="send-btn secondary" onclick="document.getElementById('fileInput').click()" style="flex:0 0 auto;padding:13px 16px;">＋ Upload</button></div></div>
 
 
 <!-- GAMES MODAL -->
-<div id="gamesModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:400;flex-direction:column;align-items:center;overflow-y:auto;">
+<div id="gamesModal" class="games-modal">
 
   <!-- Home -->
-  <div id="gamesHome" style="width:100%;max-width:430px;padding:20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-top:10px;">
-      <div style="font-family:'Orbitron',monospace;font-size:13px;letter-spacing:4px;color:#4fc3f7;">🎮 ARCADE</div>
-      <button onclick="closeGamesModal()" style="background:rgba(255,255,255,0.1);border:1px solid #333;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+  <div id="gamesHome" class="games-screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-top:6px;">
+      <div class="games-modal-title">Arcade</div>
+      <button class="modal-close" onclick="closeGamesModal()">✕</button>
     </div>
-    <div style="text-align:center;font-family:'Orbitron',monospace;font-size:8px;color:#333;letter-spacing:2px;margin-bottom:16px;">BALANCE: $<span id="playerBalance">1000</span></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div onclick="openGame('blackjack')" style="background:#080810;border:1px solid #1a1a2e;border-radius:14px;padding:20px;text-align:center;cursor:pointer;">
-        <div style="font-size:40px;margin-bottom:10px;">🃏</div>
-        <div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:#4fc3f7;">BLACKJACK</div>
-        <div style="font-family:'Orbitron',monospace;font-size:7px;color:#333;margin-top:4px;">Beat the dealer</div>
+    <div style="margin-bottom:18px;">
+      <span class="bal-chip">Balance <strong>$<span id="playerBalance">1000</span></strong></span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div onclick="openGame('blackjack')" class="game-card">
+        <span class="game-emoji">🃏</span>
+        <div class="game-name">Blackjack</div>
+        <div class="game-desc">Beat the dealer</div>
       </div>
-      <div onclick="openGame('poker')" style="background:#080810;border:1px solid #1a1a2e;border-radius:14px;padding:20px;text-align:center;cursor:pointer;">
-        <div style="font-size:40px;margin-bottom:10px;">♠️</div>
-        <div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:#4fc3f7;">VIDEO POKER</div>
-        <div style="font-family:'Orbitron',monospace;font-size:7px;color:#333;margin-top:4px;">Jacks or better</div>
+      <div onclick="openGame('poker')" class="game-card">
+        <span class="game-emoji">♠️</span>
+        <div class="game-name">Video Poker</div>
+        <div class="game-desc">Jacks or better</div>
       </div>
-      <div onclick="openGame('slots')" style="background:#080810;border:1px solid #1a1a2e;border-radius:14px;padding:20px;text-align:center;cursor:pointer;grid-column:span 2;">
-        <div style="font-size:40px;margin-bottom:10px;">🎰</div>
-        <div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:#ffd700;">B58 SLOTS</div>
-        <div style="font-family:'Orbitron',monospace;font-size:7px;color:#333;margin-top:4px;">Spin to win — B58 bonus race</div>
+      <div onclick="openGame('slots')" class="game-card featured" style="grid-column:span 2;">
+        <span class="game-emoji">🎰</span>
+        <div class="game-name">B58 Slots</div>
+        <div class="game-desc">Spin to win — B58 bonus race</div>
       </div>
     </div>
   </div>
 
   <!-- Blackjack -->
-  <div id="blackjackGame" style="display:none;width:100%;max-width:430px;padding:16px;">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-top:10px;">
-      <button onclick="openGame('home')" style="background:transparent;border:none;color:#4fc3f7;font-size:22px;cursor:pointer;">←</button>
-      <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:#4fc3f7;">BLACKJACK</div>
-      <div style="margin-left:auto;font-family:'Orbitron',monospace;font-size:8px;color:#555;">$<span id="bjBalance">1000</span></div>
+  <div id="blackjackGame" class="games-screen" style="display:none;">
+    <div class="game-header">
+      <button class="game-back" onclick="openGame('home')">←</button>
+      <div class="game-title">Blackjack</div>
+      <div class="game-bal">$<span id="bjBalance">1000</span></div>
     </div>
-    <div style="background:#080810;border:1px solid #1a1a2e;border-radius:12px;padding:14px;margin-bottom:10px;">
-      <div style="font-family:'Orbitron',monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:10px;">DEALER <span id="dealerScore"></span></div>
+    <div class="gpanel">
+      <div class="gpanel-label">Dealer <span class="gpanel-score" id="dealerScore"></span></div>
       <div id="dealerCards" style="display:flex;gap:6px;flex-wrap:wrap;min-height:80px;"></div>
     </div>
-    <div style="background:#080810;border:1px solid #1a1a2e;border-radius:12px;padding:14px;margin-bottom:10px;">
-      <div style="font-family:'Orbitron',monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:10px;">YOU <span id="playerScore"></span></div>
+    <div class="gpanel">
+      <div class="gpanel-label">You <span class="gpanel-score" id="playerScore"></span></div>
       <div id="playerCards" style="display:flex;gap:6px;flex-wrap:wrap;min-height:80px;"></div>
     </div>
-    <div id="bjResult" style="text-align:center;font-family:'Orbitron',monospace;font-size:14px;letter-spacing:3px;color:#4fc3f7;min-height:28px;margin-bottom:10px;"></div>
-    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
-      <div style="font-family:'Orbitron',monospace;font-size:7px;color:#555;letter-spacing:1px;width:100%;margin-bottom:4px;">BET: $<span id="currentBet">0</span></div>
-      <button onclick="setBet(10)"  class="send-btn" style="padding:8px 10px;font-size:7px;">+$10</button>
-      <button onclick="setBet(25)"  class="send-btn" style="padding:8px 10px;font-size:7px;">+$25</button>
-      <button onclick="setBet(50)"  class="send-btn" style="padding:8px 10px;font-size:7px;">+$50</button>
-      <button onclick="setBet(100)" class="send-btn" style="padding:8px 10px;font-size:7px;">+$100</button>
-      <button onclick="clearBet()"  class="send-btn" style="padding:8px 10px;font-size:7px;color:#ff5555;">Clear</button>
+    <div class="result-line" id="bjResult"></div>
+    <div class="bet-row">
+      <div class="bet-row-label"><span>Bet</span><span class="bet-row-amount">$<span id="currentBet">0</span></span></div>
+      <div class="chip-row">
+        <button onclick="setBet(10)"  class="chip-btn">+$10</button>
+        <button onclick="setBet(25)"  class="chip-btn">+$25</button>
+        <button onclick="setBet(50)"  class="chip-btn">+$50</button>
+        <button onclick="setBet(100)" class="chip-btn">+$100</button>
+        <button onclick="clearBet()"  class="chip-btn warn">Clear</button>
+      </div>
     </div>
     <div id="bjActions" style="display:flex;gap:8px;">
-      <button onclick="bjDeal()" id="bjDealBtn" class="send-btn" style="flex:1;">Deal</button>
-      <button onclick="bjHit()"   id="bjHitBtn"   class="send-btn" style="flex:1;display:none;">Hit</button>
-      <button onclick="bjStand()" id="bjStandBtn" class="send-btn" style="flex:1;display:none;">Stand</button>
-      <button onclick="bjDouble()"id="bjDoubleBtn"class="send-btn" style="flex:1;display:none;font-size:7px;">Double</button>
+      <button onclick="bjDeal()"   id="bjDealBtn"   class="send-btn" style="flex:1;">Deal</button>
+      <button onclick="bjHit()"    id="bjHitBtn"    class="send-btn" style="flex:1;display:none;">Hit</button>
+      <button onclick="bjStand()"  id="bjStandBtn"  class="send-btn secondary" style="flex:1;display:none;">Stand</button>
+      <button onclick="bjDouble()" id="bjDoubleBtn" class="send-btn secondary" style="flex:1;display:none;">Double</button>
     </div>
   </div>
 
   <!-- Video Poker -->
-  <div id="pokerGame" style="display:none;width:100%;max-width:430px;padding:16px;">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-top:10px;">
-      <button onclick="openGame('home')" style="background:transparent;border:none;color:#4fc3f7;font-size:22px;cursor:pointer;">←</button>
-      <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:#4fc3f7;">VIDEO POKER</div>
-      <div style="margin-left:auto;font-family:'Orbitron',monospace;font-size:8px;color:#555;">$<span id="vpBalance">1000</span></div>
+  <div id="pokerGame" class="games-screen" style="display:none;">
+    <div class="game-header">
+      <button class="game-back" onclick="openGame('home')">←</button>
+      <div class="game-title">Video Poker</div>
+      <div class="game-bal">$<span id="vpBalance">1000</span></div>
     </div>
-    <div style="background:#080810;border:1px solid #1a1a2e;border-radius:12px;padding:12px;margin-bottom:10px;font-family:'Orbitron',monospace;font-size:7px;color:#555;letter-spacing:1px;">
-      <div style="display:grid;grid-template-columns:1fr auto;gap:3px;">
-        <span>Royal Flush</span><span style="color:#ffd700;">800x</span>
-        <span>Straight Flush</span><span style="color:#4fc3f7;">50x</span>
-        <span>Four of a Kind</span><span style="color:#4fc3f7;">25x</span>
-        <span>Full House</span><span style="color:#4fc3f7;">9x</span>
-        <span>Flush</span><span style="color:#4fc3f7;">6x</span>
-        <span>Straight</span><span style="color:#4fc3f7;">4x</span>
-        <span>Three of a Kind</span><span style="color:#4fc3f7;">3x</span>
-        <span>Two Pair</span><span style="color:#4fc3f7;">2x</span>
-        <span>Jacks or Better</span><span style="color:#4fc3f7;">1x</span>
+    <div class="paytable" style="margin-bottom:10px;">
+      <div class="paytable-title">Pay Table</div>
+      <div class="paytable-grid">
+        <span class="pay-name">Royal Flush</span><span class="pay-mult gold">800x</span>
+        <span class="pay-name">Straight Flush</span><span class="pay-mult cyan">50x</span>
+        <span class="pay-name">Four of a Kind</span><span class="pay-mult cyan">25x</span>
+        <span class="pay-name">Full House</span><span class="pay-mult cyan">9x</span>
+        <span class="pay-name">Flush</span><span class="pay-mult cyan">6x</span>
+        <span class="pay-name">Straight</span><span class="pay-mult cyan">4x</span>
+        <span class="pay-name">Three of a Kind</span><span class="pay-mult cyan">3x</span>
+        <span class="pay-name">Two Pair</span><span class="pay-mult cyan">2x</span>
+        <span class="pay-name">Jacks or Better</span><span class="pay-mult cyan">1x</span>
       </div>
     </div>
     <div id="vpCards" style="display:flex;gap:6px;justify-content:center;margin-bottom:10px;min-height:110px;flex-wrap:wrap;"></div>
-    <div id="vpResult" style="text-align:center;font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:#ffd700;min-height:24px;margin-bottom:10px;"></div>
-    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
-      <div style="font-family:'Orbitron',monospace;font-size:7px;color:#555;letter-spacing:1px;width:100%;margin-bottom:4px;">BET: $<span id="vpCurrentBet">0</span></div>
-      <button onclick="vpSetBet(10)"  class="send-btn" style="padding:8px 10px;font-size:7px;">+$10</button>
-      <button onclick="vpSetBet(25)"  class="send-btn" style="padding:8px 10px;font-size:7px;">+$25</button>
-      <button onclick="vpSetBet(50)"  class="send-btn" style="padding:8px 10px;font-size:7px;">+$50</button>
-      <button onclick="vpClearBet()"  class="send-btn" style="padding:8px 10px;font-size:7px;color:#ff5555;">Clear</button>
+    <div class="result-line" id="vpResult"></div>
+    <div class="bet-row">
+      <div class="bet-row-label"><span>Bet</span><span class="bet-row-amount">$<span id="vpCurrentBet">0</span></span></div>
+      <div class="chip-row">
+        <button onclick="vpSetBet(10)"  class="chip-btn">+$10</button>
+        <button onclick="vpSetBet(25)"  class="chip-btn">+$25</button>
+        <button onclick="vpSetBet(50)"  class="chip-btn">+$50</button>
+        <button onclick="vpClearBet()"  class="chip-btn warn">Clear</button>
+      </div>
     </div>
     <div style="display:flex;gap:8px;">
       <button onclick="vpDeal()" id="vpDealBtn" class="send-btn" style="flex:1;">Deal</button>
@@ -334,71 +1360,72 @@ body{-webkit-tap-highlight-color:transparent;}
   </div>
 
   <!-- Slots -->
-  <div id="slotsGame" style="display:none;width:100%;max-width:430px;padding:16px;">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-top:10px;">
-      <button onclick="openGame('home')" style="background:transparent;border:none;color:#ffd700;font-size:22px;cursor:pointer;">←</button>
-      <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:#ffd700;">B58 SLOTS</div>
+  <div id="slotsGame" class="games-screen" style="display:none;">
+    <div class="game-header">
+      <button class="game-back" onclick="openGame('home')">←</button>
+      <div class="game-title" style="color:var(--gold);">B58 Slots</div>
       <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-        <div style="font-family:'Orbitron',monospace;font-size:8px;color:#555;">$<span id="slotBalance">1000</span></div>
-        <button id="devBtn" onclick="showDevModal()" style="display:none;background:rgba(255,50,50,0.15);border:1px solid rgba(255,50,50,0.3);border-radius:6px;color:#ff5555;font-family:'Orbitron',monospace;font-size:7px;padding:4px 8px;cursor:pointer;letter-spacing:1px;">DEV</button>
-        <button onclick="showPwModal()" style="background:transparent;border:none;color:#1a1a2e;font-size:10px;cursor:pointer;padding:4px;">⚙</button>
+        <div class="game-bal" style="margin-left:0;">$<span id="slotBalance">1000</span></div>
+        <button id="devBtn" onclick="showDevModal()" class="dev-pill" style="display:none;">DEV</button>
+        <button onclick="showPwModal()" class="gear-btn">⚙</button>
       </div>
     </div>
 
     <!-- Password Modal -->
-    <div id="pwModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:500;flex-direction:column;align-items:center;justify-content:center;">
-      <div style="background:#0d0d18;border:1px solid #1a1a2e;border-radius:16px;padding:28px 24px;width:80%;max-width:300px;text-align:center;">
-        <div style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:#555;margin-bottom:16px;">ENTER CODE</div>
-        <input id="pwInput" type="password" maxlength="10" style="width:100%;background:#060608;border:1px solid #1a1a2e;border-radius:8px;padding:12px;color:#fff;font-family:'Orbitron',monospace;font-size:16px;text-align:center;letter-spacing:4px;outline:none;box-sizing:border-box;margin-bottom:12px;" placeholder="••••••" onkeydown="if(event.key==='Enter')checkPw()">
-        <div id="pwError" style="font-family:'Orbitron',monospace;font-size:8px;color:#ff5555;min-height:16px;margin-bottom:10px;"></div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="checkPw()" style="flex:1;padding:12px;border-radius:8px;background:rgba(79,195,247,0.1);border:1px solid rgba(79,195,247,0.3);color:#4fc3f7;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;cursor:pointer;">CONFIRM</button>
-          <button onclick="document.getElementById('pwModal').style.display='none'" style="padding:12px 16px;border-radius:8px;background:transparent;border:1px solid #1a1a2e;color:#444;font-family:'Orbitron',monospace;font-size:8px;cursor:pointer;">CANCEL</button>
+    <div id="pwModal" class="center-modal">
+      <div class="center-modal-card">
+        <div class="cm-title">Enter Code</div>
+        <div class="cm-sub">Restricted access</div>
+        <input id="pwInput" type="password" maxlength="10" class="cm-input" placeholder="••••••" onkeydown="if(event.key==='Enter')checkPw()">
+        <div id="pwError" class="cm-error"></div>
+        <div class="cm-actions">
+          <button onclick="checkPw()" class="cm-btn primary">Confirm</button>
+          <button onclick="document.getElementById('pwModal').style.display='none'" class="cm-btn cancel">Cancel</button>
         </div>
       </div>
     </div>
 
     <!-- Dev Modal -->
-    <div id="devModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:500;flex-direction:column;align-items:center;justify-content:center;">
-      <div style="background:#0d0d18;border:1px solid rgba(255,50,50,0.3);border-radius:16px;padding:28px 24px;width:80%;max-width:300px;text-align:center;">
-        <div style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:#ff5555;margin-bottom:6px;">DEV MODE</div>
-        <div style="font-family:'Orbitron',monospace;font-size:7px;color:#333;letter-spacing:1px;margin-bottom:20px;">Testing tools</div>
-        <button onclick="triggerBonus();document.getElementById('devModal').style.display='none';" style="width:100%;padding:14px;border-radius:8px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.35);color:#ffd700;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;margin-bottom:10px;">🎰 TRIGGER B58 BONUS</button>
-        <button onclick="document.getElementById('devModal').style.display='none'" style="width:100%;padding:12px;border-radius:8px;background:transparent;border:1px solid #1a1a2e;color:#444;font-family:'Orbitron',monospace;font-size:8px;cursor:pointer;">CLOSE</button>
+    <div id="devModal" class="center-modal">
+      <div class="center-modal-card danger">
+        <div class="cm-title danger">Dev Mode</div>
+        <div class="cm-sub">Testing tools</div>
+        <button onclick="triggerBonus();document.getElementById('devModal').style.display='none';" class="cm-btn gold" style="width:100%;margin-bottom:10px;">🎰 Trigger B58 Bonus</button>
+        <button onclick="document.getElementById('devModal').style.display='none'" class="cm-btn cancel" style="width:100%;">Close</button>
       </div>
     </div>
     <!-- Visual Reels -->
-    <div style="display:flex;gap:6px;margin-bottom:12px;justify-content:center;">
-      <canvas id="reel0" width="100" height="150" style="border-radius:10px;background:#060610;border:1px solid #1a1a2e;"></canvas>
-      <canvas id="reel1" width="100" height="150" style="border-radius:10px;background:#060610;border:1px solid #1a1a2e;"></canvas>
-      <canvas id="reel2" width="100" height="150" style="border-radius:10px;background:#060610;border:1px solid #1a1a2e;"></canvas>
+    <div class="reels-row">
+      <canvas id="reel0" width="100" height="150"></canvas>
+      <canvas id="reel1" width="100" height="150"></canvas>
+      <canvas id="reel2" width="100" height="150"></canvas>
     </div>
-    <div id="slotResult" style="text-align:center;font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;color:#4fc3f7;min-height:28px;margin-bottom:12px;"></div>
-    <div style="display:flex;gap:6px;margin-bottom:12px;align-items:center;">
-      <div style="font-family:'Orbitron',monospace;font-size:7px;color:#555;letter-spacing:1px;">BET:</div>
-      <button onclick="slotSetBet(-25)" class="send-btn" style="padding:10px 14px;font-size:16px;">−</button>
-      <div id="slotBetDisplay" style="font-family:'Orbitron',monospace;font-size:18px;color:#ffd700;flex:1;text-align:center;">25</div>
-      <button onclick="slotSetBet(25)"  class="send-btn" style="padding:10px 14px;font-size:16px;">+</button>
-      <button onclick="slotSetBet(250-slotBet)" class="send-btn" style="padding:10px;font-size:8px;color:#ffd700;border-color:rgba(255,215,0,0.3);">MAX</button>
+    <div class="result-line" id="slotResult"></div>
+    <div class="bet-stepper">
+      <div class="bet-stepper-label">Bet</div>
+      <button onclick="slotSetBet(-25)" class="bet-stepper-btn">−</button>
+      <div class="bet-stepper-amt" id="slotBetDisplay">25</div>
+      <button onclick="slotSetBet(25)"  class="bet-stepper-btn">+</button>
+      <button onclick="slotSetBet(250-slotBet)" class="bet-stepper-max">MAX</button>
     </div>
-    <button id="spinBtn" onclick="slotSpin()" class="send-btn" style="width:100%;padding:18px;font-size:16px;letter-spacing:4px;background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.4);color:#ffd700;margin-bottom:12px;">🎰 SPIN</button>
-    <div id="bonusPickBtns" style="display:none;margin-bottom:12px;">
-      <div style="font-family:'Orbitron',monospace;font-size:9px;color:#ffd700;text-align:center;margin-bottom:10px;letter-spacing:2px;">PICK YOUR CAR:</div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="slotPickCar(0)" class="send-btn" style="flex:1;padding:14px;font-size:12px;color:#ffd700;border-color:rgba(255,215,0,0.4);">540i</button>
-        <button onclick="slotPickCar(1)" class="send-btn" style="flex:1;padding:14px;font-size:12px;color:#ffd700;border-color:rgba(255,215,0,0.4);">330i</button>
-        <button onclick="slotPickCar(2)" class="send-btn" style="flex:1;padding:14px;font-size:12px;color:#ffd700;border-color:rgba(255,215,0,0.4);">335i</button>
+    <button id="spinBtn" onclick="slotSpin()" class="spin-btn">🎰 Spin</button>
+    <div id="bonusPickBtns" class="bonus-pick" style="display:none;">
+      <div class="bonus-pick-title">Pick your car</div>
+      <div class="bonus-pick-row">
+        <button onclick="slotPickCar(0)" class="bonus-car-btn">540i</button>
+        <button onclick="slotPickCar(1)" class="bonus-car-btn">330i</button>
+        <button onclick="slotPickCar(2)" class="bonus-car-btn">335i</button>
       </div>
     </div>
-    <div style="background:#080810;border:1px solid #1a1a2e;border-radius:10px;padding:12px;">
-      <div style="font-family:'Orbitron',monospace;font-size:7px;color:#333;letter-spacing:2px;margin-bottom:8px;">PAY TABLE</div>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:4px;font-family:'Orbitron',monospace;font-size:7px;">
-        <span style="color:#555;">Trophy x3 (WILD)</span><span style="color:#ffd700;">500x</span>
-        <span style="color:#555;">Roundel x3 (BONUS)</span><span style="color:#4fc3f7;">200x</span>
-        <span style="color:#555;">M Badge x3</span><span style="color:#4fc3f7;">100x</span>
-        <span style="color:#555;">Boost x3</span><span style="color:#4fc3f7;">50x</span>
-        <span style="color:#555;">Key Fob x3</span><span style="color:#4fc3f7;">20x</span>
-        <span style="color:#555;">B + 5 + 8</span><span style="color:#ffd700;">BONUS RACE!</span>
+    <div class="paytable">
+      <div class="paytable-title">Pay Table</div>
+      <div class="paytable-grid">
+        <span class="pay-name">Trophy x3 (WILD)</span><span class="pay-mult gold">500x</span>
+        <span class="pay-name">Roundel x3 (BONUS)</span><span class="pay-mult cyan">200x</span>
+        <span class="pay-name">M Badge x3</span><span class="pay-mult cyan">100x</span>
+        <span class="pay-name">Boost x3</span><span class="pay-mult cyan">50x</span>
+        <span class="pay-name">Key Fob x3</span><span class="pay-mult cyan">20x</span>
+        <span class="pay-name">B + 5 + 8</span><span class="pay-mult gold">BONUS</span>
       </div>
     </div>
   </div>
@@ -406,87 +1433,87 @@ body{-webkit-tap-highlight-color:transparent;}
 </div>
 
 <!-- DELETE CONFIRM MODAL -->
-<div id="deleteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:300;flex-direction:column;align-items:center;justify-content:center;">
-  <div style="background:#0d0d18;border:1px solid #1a1a2e;border-radius:16px;padding:28px 24px;width:88%;max-width:320px;text-align:center;">
-    <div style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:3px;color:#ff5555;margin-bottom:10px;text-transform:uppercase;">Delete Preset?</div>
-    <div style="font-size:13px;color:#555;letter-spacing:1px;margin-bottom:24px;">This cannot be undone.</div>
-    <div id="deleteTimer" style="font-family:Orbitron,monospace;font-size:28px;color:#ff5555;margin-bottom:20px;display:none;">3</div>
-    <div style="display:flex;gap:10px;">
-      <button onclick="cancelDelete()" style="flex:1;padding:12px;border-radius:8px;background:transparent;border:1px solid #1a1a2e;color:#444;font-family:Orbitron,monospace;font-size:8px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;">No, Keep It</button>
-      <button id="deleteConfirmBtn" onclick="startDeleteTimer()" style="flex:1;padding:12px;border-radius:8px;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.35);color:#ff5555;font-family:Orbitron,monospace;font-size:8px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;">Yes, Delete</button>
+<div id="deleteModal" class="center-modal" style="z-index:300;">
+  <div class="center-modal-card danger">
+    <div class="cm-title danger">Delete Preset?</div>
+    <div class="cm-sub">This cannot be undone.</div>
+    <div id="deleteTimer" style="font-family:'Orbitron',monospace;font-size:32px;font-weight:700;color:var(--bad);margin-bottom:18px;display:none;">3</div>
+    <div class="cm-actions">
+      <button onclick="cancelDelete()" class="cm-btn cancel">No, Keep It</button>
+      <button id="deleteConfirmBtn" onclick="startDeleteTimer()" class="cm-btn danger">Yes, Delete</button>
     </div>
   </div>
 </div>
 
 <!-- COLOR CUSTOMIZER MODAL -->
-<div id="colorModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:300;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#0d0d18;border:1px solid #1a1a2e;border-radius:16px;padding:22px 20px;width:92%;max-width:360px;">
-    <div style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:4px;color:#4fc3f7;margin-bottom:4px;text-transform:uppercase;">Color Editor</div>
-    <div style="font-size:11px;color:#333;letter-spacing:1px;margin-bottom:18px;">Customize BMW roundel colors</div>
-    
+<div id="colorModal" class="color-modal">
+  <div class="color-modal-card">
+    <div class="color-modal-title">Color Editor</div>
+    <div class="color-modal-sub">Customize BMW roundel colors</div>
+
     <!-- Preview circle -->
-    <canvas id="colorPreviewCanvas" width="120" height="120" style="border-radius:50%;display:block;margin:0 auto 18px;"></canvas>
+    <canvas id="colorPreviewCanvas" width="120" height="120"></canvas>
 
     <!-- Color inputs -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+    <div class="color-grid">
       <div>
-        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">BLUE (LIGHT)</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="color" id="cc_blue" value="#1a5fad" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
-          <input type="text" id="cc_blue_hex" value="#1a5fad" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_blue'))">
+        <div class="color-cell-label">Blue (Light)</div>
+        <div class="color-cell-row">
+          <input type="color" id="cc_blue" value="#1a5fad" class="color-swatch" oninput="previewColors()">
+          <input type="text" id="cc_blue_hex" value="#1a5fad" maxlength="7" class="hex-input" oninput="hexInputChanged(this,document.getElementById('cc_blue'))">
         </div>
       </div>
       <div>
-        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">BLUE (DARK)</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="color" id="cc_blueDark" value="#0d3d7a" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
-          <input type="text" id="cc_blueDark_hex" value="#0d3d7a" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_blueDark'))">
+        <div class="color-cell-label">Blue (Dark)</div>
+        <div class="color-cell-row">
+          <input type="color" id="cc_blueDark" value="#0d3d7a" class="color-swatch" oninput="previewColors()">
+          <input type="text" id="cc_blueDark_hex" value="#0d3d7a" maxlength="7" class="hex-input" oninput="hexInputChanged(this,document.getElementById('cc_blueDark'))">
         </div>
       </div>
       <div>
-        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">WHITE (LIGHT)</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="color" id="cc_white" value="#f5f5f5" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
-          <input type="text" id="cc_white_hex" value="#f5f5f5" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_white'))">
+        <div class="color-cell-label">White (Light)</div>
+        <div class="color-cell-row">
+          <input type="color" id="cc_white" value="#f5f5f5" class="color-swatch" oninput="previewColors()">
+          <input type="text" id="cc_white_hex" value="#f5f5f5" maxlength="7" class="hex-input" oninput="hexInputChanged(this,document.getElementById('cc_white'))">
         </div>
       </div>
       <div>
-        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">WHITE (DARK)</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="color" id="cc_whiteDark" value="#d0d0d0" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
-          <input type="text" id="cc_whiteDark_hex" value="#d0d0d0" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_whiteDark'))">
+        <div class="color-cell-label">White (Dark)</div>
+        <div class="color-cell-row">
+          <input type="color" id="cc_whiteDark" value="#d0d0d0" class="color-swatch" oninput="previewColors()">
+          <input type="text" id="cc_whiteDark_hex" value="#d0d0d0" maxlength="7" class="hex-input" oninput="hexInputChanged(this,document.getElementById('cc_whiteDark'))">
         </div>
       </div>
       <div>
-        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">RING</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="color" id="cc_ring" value="#0a0a0a" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
-          <input type="text" id="cc_ring_hex" value="#0a0a0a" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_ring'))">
+        <div class="color-cell-label">Ring</div>
+        <div class="color-cell-row">
+          <input type="color" id="cc_ring" value="#0a0a0a" class="color-swatch" oninput="previewColors()">
+          <input type="text" id="cc_ring_hex" value="#0a0a0a" maxlength="7" class="hex-input" oninput="hexInputChanged(this,document.getElementById('cc_ring'))">
         </div>
       </div>
       <div>
-        <div style="font-family:Orbitron,monospace;font-size:7px;color:#555;letter-spacing:2px;margin-bottom:5px;">CHROME</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <input type="color" id="cc_chrome" value="#777777" style="-webkit-appearance:none;width:32px;height:28px;border:1px solid #1a1a2e;border-radius:6px;background:none;padding:2px;cursor:pointer;" oninput="previewColors()">
-          <input type="text" id="cc_chrome_hex" value="#777777" maxlength="7" style="flex:1;background:#060608;border:1px solid #1a1a2e;border-radius:6px;padding:6px 8px;color:#eee;font-family:monospace;font-size:11px;outline:none;" oninput="hexInputChanged(this,document.getElementById('cc_chrome'))">
+        <div class="color-cell-label">Chrome</div>
+        <div class="color-cell-row">
+          <input type="color" id="cc_chrome" value="#777777" class="color-swatch" oninput="previewColors()">
+          <input type="text" id="cc_chrome_hex" value="#777777" maxlength="7" class="hex-input" oninput="hexInputChanged(this,document.getElementById('cc_chrome'))">
         </div>
       </div>
     </div>
 
     <!-- Quick presets -->
-    <div style="font-family:Orbitron,monospace;font-size:7px;color:#333;letter-spacing:2px;margin-bottom:8px;">QUICK PRESETS</div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-      <button onclick="applyColorPreset('classic')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Classic</button>
-      <button onclick="applyColorPreset('chrome')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Chrome</button>
-      <button onclick="applyColorPreset('msport')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">M Sport</button>
-      <button onclick="applyColorPreset('gold')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Gold</button>
-      <button onclick="applyColorPreset('purple')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Purple</button>
-      <button onclick="applyColorPreset('stealth')" style="padding:6px 10px;border-radius:6px;background:#0a0a14;border:1px solid #1a1a2e;color:#4fc3f7;font-family:Orbitron,monospace;font-size:7px;letter-spacing:1px;cursor:pointer;">Stealth</button>
+    <div class="preset-row-label">Quick Presets</div>
+    <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;">
+      <button onclick="applyColorPreset('classic')" class="preset-pill">Classic</button>
+      <button onclick="applyColorPreset('chrome')" class="preset-pill">Chrome</button>
+      <button onclick="applyColorPreset('msport')" class="preset-pill">M Sport</button>
+      <button onclick="applyColorPreset('gold')" class="preset-pill">Gold</button>
+      <button onclick="applyColorPreset('purple')" class="preset-pill">Purple</button>
+      <button onclick="applyColorPreset('stealth')" class="preset-pill">Stealth</button>
     </div>
 
-    <div style="display:flex;gap:10px;">
-      <button onclick="saveColors()" style="flex:1;padding:12px;border-radius:8px;background:rgba(79,195,247,0.1);border:1px solid rgba(79,195,247,0.35);color:#4fc3f7;font-family:Orbitron,monospace;font-size:8px;letter-spacing:3px;cursor:pointer;text-transform:uppercase;">Save</button>
-      <button onclick="closeColorModal()" style="flex:0 0 auto;padding:12px 16px;border-radius:8px;background:transparent;border:1px solid #1a1a2e;color:#444;font-family:Orbitron,monospace;font-size:8px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;">Cancel</button>
+    <div class="cm-actions">
+      <button onclick="saveColors()" class="cm-btn primary">Save</button>
+      <button onclick="closeColorModal()" class="cm-btn cancel" style="flex:0 0 auto;padding:13px 18px;">Cancel</button>
     </div>
   </div>
 </div>
@@ -4971,12 +5998,8 @@ function drawReelCanvas(){
   if(sb){
     const idle=slotPhase==='idle';
     sb.disabled=!idle;
-    sb.style.opacity=idle?'1':'0.5';
-    sb.style.background=idle?'rgba(255,215,0,0.12)':'rgba(100,100,100,0.1)';
-    sb.style.borderColor=idle?'rgba(255,215,0,0.5)':'rgba(100,100,100,0.3)';
-    sb.style.color=idle?'#ffd700':'#666';
-    sb.style.transform=idle?'scale(1)':'scale(0.97)';
-    sb.textContent=slotPhase==='spinning'?'🎰 SPINNING...':slotPhase==='result'?'✅ DONE':'🎰 SPIN';
+    sb.classList.toggle('disabled',!idle);
+    sb.textContent=slotPhase==='spinning'?'🎰 Spinning…':slotPhase==='result'?'✓ Done':'🎰 Spin';
   }
 
   // If bonus - draw race on all 3 canvases as one wide track
