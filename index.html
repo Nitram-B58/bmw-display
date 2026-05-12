@@ -1651,16 +1651,21 @@ async function streamTick(){
   }
 }
 
+let lastProbeError = '';
+
 // Probe — quick check that the ESP32 is reachable before we start streaming
 async function streamProbe(){
   try {
     const resp = await fetch('http://' + ESP32_HOST + '/', {
       method: 'GET',
       cache: 'no-store',
-      signal: AbortSignal.timeout(3000),
+      mode: 'cors',
+      signal: AbortSignal.timeout(5000),
     });
+    lastProbeError = '';
     return true;
   } catch(e){
+    lastProbeError = (e && e.name ? e.name + ': ' : '') + (e && e.message ? e.message : String(e));
     return false;
   }
 }
@@ -5570,7 +5575,7 @@ async function connectDevice(){
   if(!ok){
     lbl.textContent='Connect';
     dot.className='connect-dot off';
-    alert('Could not reach BMW-Display at ' + ESP32_HOST + '.\n\nMake sure your phone is connected to the "BMW-Display" Wi-Fi network in Settings.');
+    alert('Could not reach BMW-Display at ' + ESP32_HOST + '.\n\nError: ' + lastProbeError + '\n\nMake sure your phone is connected to the "BMW-Display" Wi-Fi network in Settings.');
     return;
   }
 
